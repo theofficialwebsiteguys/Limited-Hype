@@ -1,0 +1,90 @@
+.product-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .product-image img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .product-details {
+    max-width: 500px;
+  }
+  
+  .product-title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .product-price {
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .installments {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .shop-pay {
+    color: #4b4bff;
+    font-weight: bold;
+  }
+  
+  .size-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  
+  .size {
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+  }
+  
+  .size.selected {
+    background-color: black;
+    color: white;
+  }
+  
+  .authenticity {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .add-to-cart, .shop-pay-button {
+    padding: 15px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .add-to-cart {
+    background-color: black;
+    color: white;
+  }
+  
+  .shop-pay-button {
+    background-color: #4b4bff;
+    color: white;
+  }
+  
+  .more-payment-options {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    text-decoration: none;
+  }
+  

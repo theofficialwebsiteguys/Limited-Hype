@@ -1,0 +1,95 @@
+.navbar {
+    background-color: transparent !important;
+    box-shadow: none;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    z-index: 1030;
+    padding-top: 35px; /* Changed from margin-top to padding-top to prevent content from being hidden under the navbar */
+    font-size: 20px;
+    
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+
+    cursor: pointer;
+}
+
+.nav-link:hover, .nav-link.active, .nav-link:focus {
+    border-bottom: 3px solid; /* Added thickness for visibility */
+    height: 45px;
+}
+
+.cart-item{
+    margin: auto !important;
+}
+
+.navbar-nav .cart {
+
+    color: white !important;
+
+    cursor: pointer;
+}
+
+
+.cart:hover, .cart.active, .cart:focus {
+    cursor: pointer;
+    height: 45px;
+    color: white !important;
+}
+
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5); /* Adjusted for better visibility */
+    background-color: white;
+}
+
+@media (max-width: 992px) {
+    .navbar-collapse {
+        overflow-y: visible; /* Ensure no vertical scroll is applied */
+        max-height: none; /* Remove any maximum height restrictions */
+        background-color: white;
+    }
+
+    .navbar-nav {
+        display: block; /* Ensure nav-items are not inline to allow better visibility */
+        width: 100%; /* Full width to better utilize space */
+
+    }
+
+    .navbar-nav .nav-link {
+        padding: 8px 15px; /* Increased padding for better touch targets */
+        color: black !important;
+    }
+}
+
+
+
+
+.navbar {
+    padding: 50px
+}
+
+.navbar-brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.logo-container img {
+    max-height: 100px;
+    height: auto;
+}
+
+.navbar-collapse {
+    flex-grow: 1;
+}
+
+.nav-item {
+    margin: 0 10px;
+}
+
+.navbar-toggler {
+    margin-left: auto;
+}

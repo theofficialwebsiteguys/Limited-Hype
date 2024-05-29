@@ -1,0 +1,12 @@
+<div class="hero-container" [ngStyle]="{'height': heroHeight}">
+    <video *ngIf="isHomePage" class="video" loop muted autoplay oncanplay="this.play()" onloadedmetadata="this.muted = true">
+        <source src="../../assets/hero-video.mp4" type="video/mp4">
+    </video>
+    <img *ngIf="!isHomePage" [src]="backgroundImage" class="hero-image video" alt="Background Image">
+    <div class="hero-content text-center text-white">
+        <h1 class="text display-5 p-3 page-title fade-in-down">{{ page_title }}</h1>
+        <div *ngIf="isHomePage" class="col-lg-6 mx-auto">
+            <p class="lead mb-4">Kittery, Maine</p>
+        </div>
+    </div>
+</div>
