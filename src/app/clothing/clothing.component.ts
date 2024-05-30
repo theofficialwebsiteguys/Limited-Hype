@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Product } from '../models/product';
 import { ProductService } from '../product.service';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-clothing',
@@ -12,21 +13,24 @@ import { Router } from '@angular/router';
   styleUrl: './clothing.component.scss'
 })
 export class ClothingComponent {
-  clothingProducts: Product[] = [];
+  clothingProducts$!: Observable<Product[]>;
 
   constructor(private productService: ProductService, private router: Router){}
 
 
   ngOnInit(){
-    this.productService.getClothingProducts().subscribe(
-      (products: Product[]) => {
-        this.clothingProducts = products;
-        console.log(this.clothingProducts);
-      },
-      (error: any) => {
-        console.error('Error fetching Nike products', error);
-      }
-    );
+
+    this.clothingProducts$ = this.productService.getClothingProducts();
+
+    // this.productService.getClothingProducts().subscribe(
+    //   (products: Product[]) => {
+    //     this.clothingProducts = products;
+    //     console.log(this.clothingProducts);
+    //   },
+    //   (error: any) => {
+    //     console.error('Error fetching Nike products', error);
+    //   }
+    // );
   }
 
   viewProductDetail(product: any): void {

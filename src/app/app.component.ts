@@ -8,6 +8,8 @@ import { HomeComponent } from './home/home.component';
 import { NikeComponent } from './nike/nike.component';
 import { JordanComponent } from './jordan/jordan.component';
 import { ProductService } from './product.service';
+import { Observable } from 'rxjs';
+import { Product } from './models/product';
 
 @Component({
   selector: 'app-root',
@@ -19,12 +21,12 @@ import { ProductService } from './product.service';
 export class AppComponent {
   title = 'limited-hype';
 
-  products: any[] = [];
+  products$!: Observable<Product[]>;
 
   constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
-    this.products = this.productService.getAllProducts();
+
   }
 
 }

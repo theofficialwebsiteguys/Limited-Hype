@@ -39,7 +39,7 @@ export class HeroComponent {
     if (url === '/' || url === '/home') {
       this.isHomePage = true;
       this.page_title = 'Limited Hype';
-      this.heroHeight = '70vh';
+      this.heroHeight = '60vh';
     } else {
       this.isHomePage = false;
       switch (url) {
@@ -72,6 +72,16 @@ export class HeroComponent {
           this.backgroundImage = '../../assets/hero.webp';
           this.page_title = 'The Shop';
           this.heroHeight = '40vh';
+          break;
+        case '/cart':
+          this.backgroundImage = '../../assets/hero.webp';
+          this.page_title = 'Cart';
+          this.heroHeight = '30vh';
+          break;
+        case '/checkout':
+          this.backgroundImage = '../../assets/hero.webp';
+          this.page_title = 'Checkout';
+          this.heroHeight = '30vh';
           break;
         // Add more cases as needed
         default:

@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class CartService {
-  private cart = new BehaviorSubject<any[]>([]);
+  private cart = new BehaviorSubject<any[]>(this.loadCart());
   cart$ = this.cart.asObservable();
 
   constructor() { }
@@ -13,6 +13,7 @@ export class CartService {
   addToCart(product: any) {
     const currentCart = this.cart.value;
     this.cart.next([...currentCart, product]);
+    this.saveCart();
   }
 
   getCart() {
@@ -26,9 +27,20 @@ export class CartService {
       currentCart.splice(index, 1);
     }
     this.cart.next([...currentCart]);
+    this.saveCart();
   }
 
   clearCart() {
     this.cart.next([]);
+    this.saveCart();
+  }
+
+  private saveCart() {
+    localStorage.setItem('cart', JSON.stringify(this.cart.value));
+  }
+
+  private loadCart() {
+    const savedCart = localStorage.getItem('cart');
+    return savedCart ? JSON.parse(savedCart) : [];
   }
 }

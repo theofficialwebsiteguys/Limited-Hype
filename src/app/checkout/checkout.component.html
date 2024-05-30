@@ -1,7 +1,8 @@
 <div class="container mt-5">
-    <h2 class="my-5">Checkout</h2>
-    <div class="row">
-      <div class="col-12 col-md-6">
+  <!-- <h2 class="my-5 text-center">Checkout</h2> -->
+  <div class="row">
+    <div class="col-12 col-md-6">
+      <div class="card">
         <h4>Contact</h4>
         <input type="text" class="form-control mb-3" placeholder="Email or mobile phone number">
         <div class="form-check mb-3">
@@ -62,13 +63,15 @@
   
         <button class="btn btn-primary btn-block">Pay now</button>
       </div>
-      <div class="col-12 col-md-6">
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="card order-summary">
         <h4>Order Summary</h4>
         <div *ngFor="let item of cart" class="d-flex align-items-center mb-3">
-          <img [src]="item.image" alt="{{item.name}}" style="width: 50px; height: 50px;" class="mr-3">
+          <img [src]="item.imageUrl" [alt]="item.name" class="order-image mr-3">
           <div>
             <h5>{{item.name}}</h5>
-            <p>{{item.price}}</p>
+            <p>{{item.variant[0].price | currency}}</p>
             <p>Size: {{item.size}}</p>
           </div>
         </div>
@@ -77,4 +80,4 @@
       </div>
     </div>
   </div>
-  
+</div>

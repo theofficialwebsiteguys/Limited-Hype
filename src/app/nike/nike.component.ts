@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../product.service';
 import { Product } from '../models/product';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-nike',
@@ -12,21 +13,23 @@ import { Router } from '@angular/router';
   styleUrl: './nike.component.scss'
 })
 export class NikeComponent implements OnInit {
-  nikeProducts: Product[] = [];
+  nikeProducts$!: Observable<Product[]>;
 
   constructor(private productService: ProductService, private router: Router){}
 
 
   ngOnInit(){
-    this.productService.getNikeProducts().subscribe(
-      (products: Product[]) => {
-        this.nikeProducts = products;
-        console.log(this.nikeProducts);
-      },
-      (error: any) => {
-        console.error('Error fetching Nike products', error);
-      }
-    );
+
+    this.nikeProducts$ = this.productService.getNikeProducts();
+    // this.productService.getNikeProducts().subscribe(
+    //   (products: Product[]) => {
+    //     this.nikeProducts = products;
+    //     console.log(this.nikeProducts);
+    //   },
+    //   (error: any) => {
+    //     console.error('Error fetching Nike products', error);
+    //   }
+    // );
   }
 
   viewProductDetail(product: any): void {

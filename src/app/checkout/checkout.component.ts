@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class CheckoutComponent implements OnInit {
   cart: any[] = [];
-  cartTotal: number = 0;
+  cartTotal = 0;
   
   constructor(private router: Router) {
     const navigation = this.router.getCurrentNavigation();
@@ -22,6 +22,7 @@ export class CheckoutComponent implements OnInit {
 
 
   ngOnInit(): void {
+    console.log(this.cart)
     if (!this.cart.length) {
       this.router.navigate(['/cart']);
     } else {
@@ -31,7 +32,7 @@ export class CheckoutComponent implements OnInit {
 
   calculateTotal(): void {
     this.cartTotal = this.cart.reduce((total, item) => {
-      const itemPrice = parseFloat(item.price.replace(/[^0-9.-]+/g, "")); // Remove any non-numeric characters
+      const itemPrice = parseFloat(item.variant[0].price); // Remove any non-numeric characters
       return total + itemPrice;
     }, 0);
   }

@@ -1,12 +1,11 @@
-<div class="container my-5">
+<div class="container my-5" *ngIf="product">
   <div class="row">
     <div class="col-12 col-md-6">
       <img [src]="product.imageUrl" class="img-fluid" alt="{{product.name}}">
     </div>
     <div class="col-12 col-md-6">
       <h2>{{product.name}}</h2>
-      <p>{{product.price}}</p>
-      <p>{{product.description}}</p>
+      <p>{{product.variant[0].price | currency}}</p>
       <p class="installments">
         4 interest-free installments, or from $14.44/mo with
         <span class="shop-pay">Shop Pay</span>
@@ -19,9 +18,33 @@
       <p class="authenticity">100% Authentic</p>
       <div class="product-actions">
         <button class="add-to-cart" (click)="addToCart()">Add to cart</button>
-        <button class="shop-pay-button">Buy with Shop Pay</button>
-        <a href="#" class="more-payment-options">More payment options</a>
+        <!-- <button class="shop-pay-button">Buy with Shop Pay</button> -->
+        <!-- <a href="#" class="more-payment-options">More payment options</a> -->
       </div>
     </div>
   </div>
+</div>
+
+<div class="container mt-5" >
+  <h2 class="my-5">Featured collection</h2>
+  <div class="shoe-section" *ngIf="featured$ | async as featured; else loadingFeatured">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of featured">
+        <div class="card h-100" (click)="viewProductDetail(product)">
+          <div class="card-img-container">
+            <img [src]="product.imageUrl" class="card-img-top" alt="{{product.name}}">
+          </div>
+          <div class="card-body text-center">
+            <h5 class="card-title">{{product.name}}</h5>
+            <p class="card-text">{{product.variant[0].price | currency}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #loadingFeatured>
+    <div class="text-center">
+      <img src="assets/spinning-shoe.gif" alt="Loading..." class="loading-gif">
+    </div>
+  </ng-template>
 </div>

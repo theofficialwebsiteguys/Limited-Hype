@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Product } from '../models/product';
 import { ProductService } from '../product.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-featured',
@@ -13,49 +14,41 @@ import { ProductService } from '../product.service';
 })
 export class FeaturedComponent {
 
-  featured = [
-    {
-      id: 1,
-      name: 'Nike Dunk Low Retro White Black Panda',
-      price: '$160.00 USD',
-      image: 'assets/placeholder.jpg' // Update with actual image paths
-    },
-    {
-      id: 2,
-      name: 'Nike Dunk Low Triple Pink (GS)',
-      price: 'From $180.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      id: 3,
-      name: 'Nike Dunk Low Retro White Black Panda (GS)',
-      price: '$145.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      id: 4,
-      name: 'Nike Dunk Low Grey Fog',
-      price: 'From $155.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    
-  ];
+  featured$!: Observable<Product[]>;
   
-  allProducts: Product[] = [];
+  allProducts$!: Observable<Product[]>;
+
+  loadingFeatured = true;
+  loadingAll = true;
 
   constructor(private productService: ProductService, private router: Router){}
 
 
   ngOnInit(){
-    this.productService.getAllOrganizedProducts().subscribe(
-      (products: Product[]) => {
-        this.allProducts = products;
-        console.log(this.allProducts);
-      },
-      (error: any) => {
-        console.error('Error fetching Nike products', error);
-      }
-    );
+    this.featured$ = this.productService.getFeaturedProducts();
+    this.allProducts$ = this.productService.getAllOrganizedProducts();
+
+
+    // this.productService.getFeaturedProducts().subscribe(
+    //   (products: Product[]) => {
+    //     this.featured = products;
+    //     console.log(this.allProducts);
+    //   },
+    //   (error: any) => {
+    //     console.error('Error fetching Nike products', error);
+    //   }
+    // );
+
+    // this.productService.getAllOrganizedProducts().subscribe(
+    //   (products: Product[]) => {
+    //     this.allProducts = products;
+    //     console.log(this.allProducts);
+    //   },
+    //   (error: any) => {
+    //     console.error('Error fetching Nike products', error);
+    //   }
+    // );
+    
   }
 
 

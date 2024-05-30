@@ -1,16 +1,23 @@
 <div class="container mt-5">
-  <h2 class="my-5">Nike</h2>
-  <div class="row justify-content-center">
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of nikeProducts">
+    <!-- <h2 class="my-5">Nike</h2> -->
+    <div class="shoe-section" *ngIf="nikeProducts$ | async as nikeProducts; else loading">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of nikeProducts">
           <div class="card h-100" (click)="viewProductDetail(product)">
-              <div class="card-img-container">
-                  <img [src]="product.imageUrl" class="card-img-top" alt="{{product.name}}">
-              </div>
-              <div class="card-body text-center">
-                  <h5 class="card-title">{{product.name}}</h5>
-                  <p class="card-text">{{product.variant[0].price}}</p>
-              </div>
+            <div class="card-img-container">
+              <img [src]="product.imageUrl" class="card-img-top" alt="{{product.name}}">
+            </div>
+            <div class="card-body text-center">
+              <h5 class="card-title">{{product.name}}</h5>
+              <p class="card-text">{{product.variant[0].price | currency}}</p>
+            </div>
           </div>
+        </div>
       </div>
-  </div>
+    </div>
+    <ng-template #loading>
+      <div class="text-center">
+        <p>Loading featured products...</p>
+      </div>
+    </ng-template>
 </div>
