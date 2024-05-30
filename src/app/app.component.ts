@@ -24,15 +24,7 @@ export class AppComponent {
   constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
-    this.productService.getProducts().subscribe(
-      data => {
-        this.products = data;
-        console.log(this.products);
-      },
-      error => {
-        console.error('There was an error!', error);
-      }
-    );
+    this.products = this.productService.getAllProducts();
   }
 
 }
