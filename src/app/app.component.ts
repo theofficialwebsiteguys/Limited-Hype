@@ -7,6 +7,7 @@ import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
 import { NikeComponent } from './nike/nike.component';
 import { JordanComponent } from './jordan/jordan.component';
+import { ProductService } from './product.service';
 
 @Component({
   selector: 'app-root',
@@ -17,5 +18,21 @@ import { JordanComponent } from './jordan/jordan.component';
 })
 export class AppComponent {
   title = 'limited-hype';
+
+  products: any[] = [];
+
+  constructor(private productService: ProductService) { }
+
+  ngOnInit(): void {
+    this.productService.getProducts().subscribe(
+      data => {
+        this.products = data;
+        console.log(this.products);
+      },
+      error => {
+        console.error('There was an error!', error);
+      }
+    );
+  }
 
 }
