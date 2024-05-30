@@ -1,37 +1,33 @@
 <div class="container mt-5">
-    <h2 class="my-5">Featured collection</h2>
-    <div class="row justify-content-center">
+  <h2 class="my-5">Featured collection</h2>
+  <div class="row justify-content-center">
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of featured">
-        <div class="card h-100" (click)="viewProductDetail(product)">
-          <img [src]="product.image" class="card-img-top" alt="{{product.name}}">
-          <div class="card-body text-center">
-            <h5 class="card-title">{{product.name}}</h5>
-            <p class="card-text">{{product.price}}</p>
+          <div class="card h-100" (click)="viewProductDetail(product)">
+              <div class="card-img-container">
+                  <img [src]="product.image" class="card-img-top" alt="{{product.name}}">
+              </div>
+              <div class="card-body text-center">
+                  <h5 class="card-title">{{product.name}}</h5>
+                  <p class="card-text">{{product.price}}</p>
+              </div>
           </div>
-        </div>
       </div>
-    </div>
-    <!-- <div class="text-center mt-4">
-      <button class="btn btn-dark">View all</button>
-    </div> -->
   </div>
-  
+</div>
 
-  <div class="container mt-5">
-    <h2 class="my-5">All Shoes</h2>
-    <div class="row justify-content-center">
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of all">
-        <div class="card h-100">
-          <img [src]="product.image" class="card-img-top" alt="{{product.name}}">
-          <div class="card-body text-center">
-            <h5 class="card-title">{{product.name}}</h5>
-            <p class="card-text">{{product.price}}</p>
+<div class="container mt-5">
+  <h2 class="my-5">All Items</h2>
+  <div class="row justify-content-center">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of allProducts">
+          <div class="card h-100" (click)="viewProductDetail(product)">
+              <div class="card-img-container">
+                  <img [src]="product.imageUrl" class="card-img-top" alt="{{product.name}}">
+              </div>
+              <div class="card-body text-center">
+                  <h5 class="card-title">{{product.name}}</h5>
+                  <p class="card-text">{{product.variant[0].price}}</p>
+              </div>
           </div>
-        </div>
       </div>
-    </div>
-    <div class="text-center my-5">
-      <button class="btn btn-primary">View all</button>
-    </div>
   </div>
-  
+</div>

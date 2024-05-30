@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Product } from '../models/product';
+import { ProductService } from '../product.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-yeezy',
@@ -9,27 +12,25 @@ import { Component } from '@angular/core';
   styleUrl: './yeezy.component.scss'
 })
 export class YeezyComponent {
-  yeezys = [
-    {
-      name: 'Nike Dunk Low Retro White Black Panda',
-      price: '$160.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Triple Pink (GS)',
-      price: 'From $180.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Retro White Black Panda (GS)',
-      price: '$145.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Grey Fog',
-      price: 'From $155.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    
-  ];
+  yeezyProducts: Product[] = [];
+
+  constructor(private productService: ProductService, private router: Router){}
+
+
+  ngOnInit(){
+    this.productService.getYeezyProducts().subscribe(
+      (products: Product[]) => {
+        this.yeezyProducts = products;
+        console.log(this.yeezyProducts);
+      },
+      (error: any) => {
+        console.error('Error fetching Nike products', error);
+      }
+    );
+  }
+
+  viewProductDetail(product: any): void {
+    console.log("here");
+    this.router.navigate(['/item', product.id], { state: { product } });
+  }
 }

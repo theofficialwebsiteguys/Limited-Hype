@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Product } from './models/product';
 
 @Injectable({
@@ -39,6 +39,7 @@ export class ProductService {
                 id,
                 product.name,
                 image,
+                product.brand?.name,
                 variants
               )
             )
@@ -48,6 +49,7 @@ export class ProductService {
                 id,
                 product.name,
                 product.image_url,
+                product.brand?.name,
                 [{size: product.variant_options[0]?.value, price: product.price_including_tax}]
               )
             )
@@ -60,14 +62,27 @@ export class ProductService {
       }
     );
 
-
-
-
-
-
-
-
     return this.products;
+  }
+
+  getAllOrganizedProducts(): Observable<Product[]> {
+    return of(this.organizedProducts.filter(product => !product.imageUrl.endsWith('no-image-white-standard.png') ));
+  }
+
+  getNikeProducts(): Observable<Product[]> {
+    return of(this.organizedProducts.filter(product => product.brand === 'Nike'));
+  }
+
+  getJordanProducts(): Observable<Product[]> {
+    return of(this.organizedProducts.filter(product => product.brand === 'Jordan'));
+  }
+
+  getYeezyProducts(): Observable<Product[]> {
+    return of(this.organizedProducts.filter(product => product.brand === 'Yeezy'));
+  }
+
+  getClothingProducts(): Observable<Product[]> {
+    return of(this.organizedProducts.filter(product => product.brand === 'Denim Tears' || product.brand === 'Timberland' || product.brand === 'Essentials'));
   }
 
 }

@@ -1,30 +1,27 @@
- 
-
-  <div class="container my-5">
-    <div class="row">
-      <div class="col-12 col-md-6">
-        <img [src]="product.image" class="img-fluid" alt="{{product.name}}">
+<div class="container my-5">
+  <div class="row">
+    <div class="col-12 col-md-6">
+      <img [src]="product.imageUrl" class="img-fluid" alt="{{product.name}}">
+    </div>
+    <div class="col-12 col-md-6">
+      <h2>{{product.name}}</h2>
+      <p>{{product.price}}</p>
+      <p>{{product.description}}</p>
+      <p class="installments">
+        4 interest-free installments, or from $14.44/mo with
+        <span class="shop-pay">Shop Pay</span>
+      </p>
+      <div class="size-selection">
+        <span *ngFor="let size of sizes" class="size" [class.selected]="size === selectedSize" (click)="selectSize(size)">
+          {{ size }}
+        </span>
       </div>
-      <div class="col-12 col-md-6">
-        <h2>{{product.name}}</h2>
-        <p>{{product.price}}</p>
-        <p>{{product.description}}</p>
-        <p class="installments">
-            4 interest-free installments, or from $14.44/mo with
-            <span class="shop-pay">Shop Pay</span>
-          </p>
-          <div class="size-selection">
-            <span *ngFor="let size of sizes" class="size" [class.selected]="size === selectedSize" (click)="selectSize(size)">
-              {{ size }}
-            </span>
-          </div>
-          <p class="authenticity">100% Authentic</p>
-          <div class="product-actions">
-            <button class="add-to-cart" (click)="addToCart()">Add to cart</button>
-            <button class="shop-pay-button">Buy with Shop Pay</button>
-            <a href="#" class="more-payment-options">More payment options</a>
-          </div>
+      <p class="authenticity">100% Authentic</p>
+      <div class="product-actions">
+        <button class="add-to-cart" (click)="addToCart()">Add to cart</button>
+        <button class="shop-pay-button">Buy with Shop Pay</button>
+        <a href="#" class="more-payment-options">More payment options</a>
       </div>
     </div>
   </div>
-  
+</div>

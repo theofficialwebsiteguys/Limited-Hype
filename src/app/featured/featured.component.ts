@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { Product } from '../models/product';
+import { ProductService } from '../product.service';
 
 @Component({
   selector: 'app-featured',
@@ -10,6 +12,7 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './featured.component.scss'
 })
 export class FeaturedComponent {
+
   featured = [
     {
       id: 1,
@@ -38,72 +41,23 @@ export class FeaturedComponent {
     
   ];
   
+  allProducts: Product[] = [];
 
-  all = [
-    {
-      name: 'Nike Dunk Low Retro White Black Panda',
-      price: '$160.00 USD',
-      image: 'assets/placeholder.jpg' // Update with actual image paths
-    },
-    {
-      name: 'Nike Dunk Low Triple Pink (GS)',
-      price: 'From $180.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Retro White Black Panda (GS)',
-      price: '$145.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Grey Fog',
-      price: 'From $155.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Retro White Black Panda',
-      price: '$160.00 USD',
-      image: 'assets/placeholder.jpg' // Update with actual image paths
-    },
-    {
-      name: 'Nike Dunk Low Triple Pink (GS)',
-      price: 'From $180.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Retro White Black Panda (GS)',
-      price: '$145.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Grey Fog',
-      price: 'From $155.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Retro White Black Panda',
-      price: '$160.00 USD',
-      image: 'assets/placeholder.jpg' // Update with actual image paths
-    },
-    {
-      name: 'Nike Dunk Low Triple Pink (GS)',
-      price: 'From $180.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Retro White Black Panda (GS)',
-      price: '$145.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    {
-      name: 'Nike Dunk Low Grey Fog',
-      price: 'From $155.00 USD',
-      image: 'assets/placeholder.jpg'
-    },
-    
-  ];
+  constructor(private productService: ProductService, private router: Router){}
 
-  constructor(private router: Router) {}
+
+  ngOnInit(){
+    this.productService.getAllOrganizedProducts().subscribe(
+      (products: Product[]) => {
+        this.allProducts = products;
+        console.log(this.allProducts);
+      },
+      (error: any) => {
+        console.error('Error fetching Nike products', error);
+      }
+    );
+  }
+
 
   viewProductDetail(product: any): void {
     console.log("here");
