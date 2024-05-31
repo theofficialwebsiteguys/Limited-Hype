@@ -1,5 +1,4 @@
 <div class="container mt-5">
-    <!-- <h2 class="my-5">Clothing</h2> -->
     <div class="shoe-section" *ngIf="clothingProducts$ | async as clothingProducts; else loading">
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of clothingProducts">

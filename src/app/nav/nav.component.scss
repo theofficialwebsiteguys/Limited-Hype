@@ -93,3 +93,10 @@
 .navbar-toggler {
     margin-left: auto;
 }
+
+
+/* Add this to your global styles or the component-specific SCSS file */
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0; /* Adjust as needed */
+}

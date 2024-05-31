@@ -100,7 +100,7 @@ export class ProductService {
 
   getNikeProducts(): Observable<Product[]> {
     return this.organizedProducts$.pipe(
-      map(products => products.filter(product => product.brand === 'Nike' || product.brand === 'Nike SB'))
+      map(products => products.filter(product => product.brand === 'Nike' || product.brand === 'Nike SB'|| product.brand === 'Supreme'))
     );
   }
 
@@ -118,7 +118,7 @@ export class ProductService {
 
   getClothingProducts(): Observable<Product[]> {
     return this.organizedProducts$.pipe(
-      map(products => products.filter(product => ['Denim Tears', 'Timberland', 'Essentials'].includes(product.brand)))
+      map(products => products.filter(product => ['Denim Tears', 'Essentials', 'Bape', 'Limited Hype', 'Pharaoh Collections', 'Hellstar', 'Eric Emanuel'].includes(product.brand)))
     );
   }
 

@@ -31,8 +31,15 @@
         <!-- Right side links -->
         <div class="collapse navbar-collapse justify-content-end" id="navbarScroll">
             <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/nike" routerLinkActive="active">Nike</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="nikeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Nike
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nikeDropdown">
+                        <li><a class="dropdown-item" routerLink="/nike/all" routerLinkActive="active">All Nikes</a></li>
+                        <li><a class="dropdown-item" routerLink="/nike/sb" routerLinkActive="active">Nike SB</a></li>
+                        <li><a class="dropdown-item" routerLink="/nike/supreme" routerLinkActive="active">Supreme</a></li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" routerLink="/jordan" routerLinkActive="active">Jordan</a>
@@ -40,8 +47,19 @@
                 <li class="nav-item">
                     <a class="nav-link" routerLink="/yeezy" routerLinkActive="active">Yeezy</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/clothing" routerLinkActive="active">Clothing</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="clothingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Clothing
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="clothingDropdown">
+                        <li><a class="dropdown-item" routerLink="/clothing/essentials" routerLinkActive="active">Essentials</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/denim-tears" routerLinkActive="active">Denim Tears</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/bape" routerLinkActive="active">Bape</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/eric-emanuel" routerLinkActive="active">Eric Emanuel</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/hellstar" routerLinkActive="active">Hellstar</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/pharaoh-collection" routerLinkActive="active">Pharaoh Collections</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/limited-hype" routerLinkActive="active">Limited Hype</a></li>
+                    </ul>
                 </li>
                 <li class="cart-item">
                     <a class="cart" routerLink="/cart" routerLinkActive="active">
