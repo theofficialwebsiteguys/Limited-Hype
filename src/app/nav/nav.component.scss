@@ -7,12 +7,10 @@
     z-index: 1030;
     padding-top: 35px; /* Changed from margin-top to padding-top to prevent content from being hidden under the navbar */
     font-size: 20px;
-    
 }
 
 .navbar-nav .nav-link {
     color: white !important;
-
     cursor: pointer;
 }
 
@@ -26,19 +24,15 @@
 }
 
 .navbar-nav .cart {
-
     color: white !important;
-
     cursor: pointer;
 }
-
 
 .cart:hover, .cart.active, .cart:focus {
     cursor: pointer;
     height: 45px;
     color: white !important;
 }
-
 
 .navbar-toggler {
     border-color: rgba(255, 255, 255, 0.5); /* Adjusted for better visibility */
@@ -50,12 +44,12 @@
         overflow-y: visible; /* Ensure no vertical scroll is applied */
         max-height: none; /* Remove any maximum height restrictions */
         background-color: white;
+        margin-top: 70px;
     }
 
     .navbar-nav {
         display: block; /* Ensure nav-items are not inline to allow better visibility */
         width: 100%; /* Full width to better utilize space */
-
     }
 
     .navbar-nav .nav-link {
@@ -63,9 +57,6 @@
         color: black !important;
     }
 }
-
-
-
 
 .navbar {
     padding: 50px
@@ -94,9 +85,19 @@
     margin-left: auto;
 }
 
-
-/* Add this to your global styles or the component-specific SCSS file */
 .nav-item.dropdown:hover .dropdown-menu {
     display: block;
     margin-top: 0; /* Adjust as needed */
+}
+
+.navbar-toggler {
+    margin-left: 95%;
+}
+
+.container-fluid{
+    align-items: normal;
+}
+
+.second-menu{
+    margin: 0 !important;
 }

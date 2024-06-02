@@ -1,5 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container-fluid">
+        <!-- Logo in the center -->
+        <a class="navbar-brand mx-auto" routerLink="/home">
+            <img src="assets/limited-hype-logo.png" id="logo" height="100" alt="Logo Description" />
+        </a>
+
         <!-- Navbar toggler button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
             aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
@@ -8,30 +13,23 @@
 
         <!-- Left side links -->
         <div class="collapse navbar-collapse justify-content-start" id="navbarScroll">
-            <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                <li class="nav-item">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/story" routerLinkActive="active">Our Story</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/shop" routerLinkActive="active">The Shop</a>
                 </li>
             </ul>
         </div>
 
-        <!-- Logo in the center -->
-        <div class="navbar-brand mx-auto">
-            <div class="logo-container">
-                <img src="assets/limited-hype-logo.png" id="logo" height="100" alt="Logo Description" />
-            </div>
-        </div>
-
         <!-- Right side links -->
-        <div class="collapse navbar-collapse justify-content-end" id="navbarScroll">
-            <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
+        <div class="collapse navbar-collapse second-menu justify-content-end" id="navbarScroll">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item dropdown" (click)="closeMenu()">
                     <a class="nav-link dropdown-toggle" id="nikeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Nike
                     </a>
@@ -41,13 +39,13 @@
                         <li><a class="dropdown-item" routerLink="/nike/supreme" routerLinkActive="active">Supreme</a></li>
                     </ul>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/jordan" routerLinkActive="active">Jordan</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/yeezy" routerLinkActive="active">Yeezy</a>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" (click)="closeMenu()">
                     <a class="nav-link dropdown-toggle" id="clothingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Clothing
                     </a>
@@ -60,10 +58,9 @@
                         <li><a class="dropdown-item" routerLink="/clothing/kaws" routerLinkActive="active">KAWS</a></li>
                         <li><a class="dropdown-item" routerLink="/clothing/pharaoh-collection" routerLinkActive="active">Pharaoh Collections</a></li>
                         <li><a class="dropdown-item" routerLink="/clothing/limited-hype" routerLinkActive="active">Limited Hype</a></li>
-                        
                     </ul>
                 </li>
-                <li class="cart-item">
+                <li class="cart-item" (click)="closeMenu()">
                     <a class="cart" routerLink="/cart" routerLinkActive="active">
                         <i class="fas fa-shopping-cart"></i>
                     </a>
