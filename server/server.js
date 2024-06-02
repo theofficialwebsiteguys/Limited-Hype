@@ -6,6 +6,10 @@ const app = express();
 // Use CORS to allow requests from your Angular app
 app.use(cors({ origin: 'http://localhost:4200' }));
 
+app.get('/home', (req, res) => {
+  res.status(200).json('Welcome, your app is working well');
+})
+
 app.get('/api/products', async (req, res) => {
   let allProducts = [];
   let after = 0; // Initialize the cursor

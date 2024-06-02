@@ -37,6 +37,8 @@ export class ClothingComponent {
           return products.filter(product => product.brand === 'Pharaoh Collections');
         } else if (brand === 'limited-hype') {
           return products.filter(product => product.brand === 'Limited Hype');
+        } else if (brand === 'kaws') {
+          return products.filter(product => product.brand === 'Kaws');
         } else {
           return products;
         }

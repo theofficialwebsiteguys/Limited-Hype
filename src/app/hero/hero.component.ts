@@ -93,6 +93,11 @@ export class HeroComponent {
           this.page_title = 'Limited Hype';
           this.heroHeight = '30vh';
           break;
+        case '/clothing/kaws':
+          this.backgroundImage = '../../assets/clothing-hero.jpg';
+          this.page_title = 'KAWS';
+          this.heroHeight = '30vh';
+          break;
         case '/story':
           this.backgroundImage = '../../assets/hero.webp';
           this.page_title = 'Our Story';

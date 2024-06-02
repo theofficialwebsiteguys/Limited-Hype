@@ -118,7 +118,7 @@ export class ProductService {
 
   getClothingProducts(): Observable<Product[]> {
     return this.organizedProducts$.pipe(
-      map(products => products.filter(product => ['Denim Tears', 'Essentials', 'Bape', 'Limited Hype', 'Pharaoh Collections', 'Hellstar', 'Eric Emanuel'].includes(product.brand)))
+      map(products => products.filter(product => ['Denim Tears', 'Essentials', 'Bape', 'Limited Hype', 'Pharaoh Collections', 'Hellstar', 'Eric Emanuel', 'Kaws'].includes(product.brand)))
     );
   }
 

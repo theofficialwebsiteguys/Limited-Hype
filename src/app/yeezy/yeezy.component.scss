@@ -1,5 +1,11 @@
 .card {
   border: none;
+  transition: transform 0.3s ease-in-out; /* Add transition for smooth effect */
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.05); /* Scale the card up slightly */
 }
 
 .card-img-container {

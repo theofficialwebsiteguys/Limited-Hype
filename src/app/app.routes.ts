@@ -25,6 +25,7 @@ export const routes: Routes = [
     { path: 'clothing/hellstar', component: ClothingComponent},
     { path: 'clothing/pharaoh-collection', component: ClothingComponent},
     { path: 'clothing/limited-hype', component: ClothingComponent},
+    { path: 'clothing/kaws', component: ClothingComponent},
     { path: 'shop', component: ShopComponent},
     { path: 'story', component: StoryComponent},
     { path: 'item/:id', component: ItemDisplayComponent },
