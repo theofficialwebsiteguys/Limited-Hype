@@ -5,6 +5,7 @@ import { CartService } from '../cart.service';
 import { Observable, of, switchMap } from 'rxjs';
 import { Product } from '../models/product';
 import { ProductService } from '../product.service';
+import { ViewportScroller } from '@angular/common';
 
 @Component({
   selector: 'app-item-display',
@@ -23,7 +24,8 @@ export class ItemDisplayComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private cartService: CartService,
-    private productService: ProductService
+    private productService: ProductService,
+    private viewportScroller: ViewportScroller
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
@@ -34,8 +36,7 @@ export class ItemDisplayComponent implements OnInit {
 
   ngOnInit(): void {
     this.featured$ = this.productService.getFeaturedProducts();
-     // Subscribe to route parameter changes
-
+    
     // Subscribe to route parameter changes
     this.route.paramMap
       .pipe(
@@ -68,8 +69,9 @@ export class ItemDisplayComponent implements OnInit {
   }
 
   viewProductDetail(product: any): void {
-    console.log("here");
-    this.router.navigate(['/item', product.id], { state: { product } });
+    this.router.navigate(['/item', product.id], { state: { product } }).then(() => {
+      this.viewportScroller.scrollToPosition([0, 0]);
+    });
   }
 
   selectSize(size: string): void {

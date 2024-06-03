@@ -29,14 +29,14 @@
         <!-- Right side links -->
         <div class="collapse navbar-collapse second-menu justify-content-end" id="navbarScroll">
             <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item dropdown" (click)="closeMenu()">
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="nikeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Nike
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="nikeDropdown">
-                        <li><a class="dropdown-item" routerLink="/nike/all" routerLinkActive="active">All Nikes</a></li>
-                        <li><a class="dropdown-item" routerLink="/nike/sb" routerLinkActive="active">Nike SB</a></li>
-                        <li><a class="dropdown-item" routerLink="/nike/supreme" routerLinkActive="active">Supreme</a></li>
+                        <li><a class="dropdown-item" routerLink="/nike/all" routerLinkActive="active" (click)="closeMenu()">All Nikes</a></li>
+                        <li><a class="dropdown-item" routerLink="/nike/sb" routerLinkActive="active" (click)="closeMenu()">Nike SB</a></li>
+                        <li><a class="dropdown-item" routerLink="/nike/supreme" routerLinkActive="active" (click)="closeMenu()">Supreme</a></li>
                     </ul>
                 </li>
                 <li class="nav-item" (click)="closeMenu()">
@@ -45,19 +45,19 @@
                 <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/yeezy" routerLinkActive="active">Yeezy</a>
                 </li>
-                <li class="nav-item dropdown" (click)="closeMenu()">
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="clothingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Clothing
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="clothingDropdown">
-                        <li><a class="dropdown-item" routerLink="/clothing/essentials" routerLinkActive="active">Essentials</a></li>
-                        <li><a class="dropdown-item" routerLink="/clothing/denim-tears" routerLinkActive="active">Denim Tears</a></li>
-                        <li><a class="dropdown-item" routerLink="/clothing/bape" routerLinkActive="active">Bape</a></li>
-                        <li><a class="dropdown-item" routerLink="/clothing/eric-emanuel" routerLinkActive="active">Eric Emanuel</a></li>
-                        <li><a class="dropdown-item" routerLink="/clothing/hellstar" routerLinkActive="active">Hellstar</a></li>
-                        <li><a class="dropdown-item" routerLink="/clothing/kaws" routerLinkActive="active">KAWS</a></li>
-                        <li><a class="dropdown-item" routerLink="/clothing/pharaoh-collection" routerLinkActive="active">Pharaoh Collections</a></li>
-                        <li><a class="dropdown-item" routerLink="/clothing/limited-hype" routerLinkActive="active">Limited Hype</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/essentials" routerLinkActive="active" (click)="closeMenu()">Essentials</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/denim-tears" routerLinkActive="active" (click)="closeMenu()">Denim Tears</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/bape" routerLinkActive="active" (click)="closeMenu()">Bape</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/eric-emanuel" routerLinkActive="active" (click)="closeMenu()">Eric Emanuel</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/hellstar" routerLinkActive="active" (click)="closeMenu()">Hellstar</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/kaws" routerLinkActive="active" (click)="closeMenu()">KAWS</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/pharaoh-collection" routerLinkActive="active" (click)="closeMenu()">Pharaoh Collections</a></li>
+                        <li><a class="dropdown-item" routerLink="/clothing/limited-hype" routerLinkActive="active" (click)="closeMenu()">Limited Hype</a></li>
                     </ul>
                 </li>
                 <li class="cart-item" (click)="closeMenu()">

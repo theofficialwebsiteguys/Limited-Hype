@@ -101,3 +101,20 @@
 .second-menu{
     margin: 0 !important;
 }
+
+.cart-item{
+    margin: 0 25px !important;
+}
+
+/* Default color for the cart icon */
+.cart i {
+    color: white;
+  }
+  
+  /* Change color to black on mobile devices */
+  @media (max-width: 992px) {
+    .cart i {
+      color: black;
+    }
+  }
+  

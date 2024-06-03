@@ -31,4 +31,12 @@ export class NavComponent {
       }
     }
   }
+
+  closeDropdown(id: string) {
+    const dropdown = document.getElementById(id);
+    if (dropdown && dropdown.classList.contains('show')) {
+      dropdown.classList.remove('show');
+    }
+  }
+  
 }

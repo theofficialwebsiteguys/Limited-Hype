@@ -4,7 +4,8 @@ const cors = require('cors');
 const app = express();
 
 // Use CORS to allow requests from your Angular app
-app.use(cors({ origin: 'https://theofficialwebsiteguys.github.io/Limited-Hype' }));
+//app.use(cors({ origin: 'https://theofficialwebsiteguys.github.io' }));
+app.use(cors({ origin: 'http://localhost:4200' }));
 
 app.get('/home', (req, res) => {
   res.status(200).json('Welcome, your app is working well');
