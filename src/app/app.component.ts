@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { NavComponent } from './nav/nav.component';
@@ -10,6 +10,7 @@ import { JordanComponent } from './jordan/jordan.component';
 import { ProductService } from './product.service';
 import { Observable } from 'rxjs';
 import { Product } from './models/product';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -21,12 +22,25 @@ import { Product } from './models/product';
 export class AppComponent {
   title = 'limited-hype';
 
-  products$!: Observable<Product[]>;
+  constructor(
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
-  constructor(private productService: ProductService) { }
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      const code = params['code'];
+      const state = params['state'];
 
-  ngOnInit(): void {
-
+      if (code && state) {
+        this.authService.handleCallback(code, state);
+      }
+    });
   }
 
+  login() {
+    this.authService.authorize();
+    console.log
+  }
 }

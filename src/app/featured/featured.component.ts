@@ -14,6 +14,7 @@ import { Observable } from 'rxjs';
 })
 export class FeaturedComponent implements OnInit {
   featured$!: Observable<Product[]>;
+  featuredProducts: Product[] = [];
   allProducts: Product[] = [];
   displayedProducts: Product[] = [];
   loadingFeatured = true;
@@ -24,7 +25,16 @@ export class FeaturedComponent implements OnInit {
   constructor(private productService: ProductService, private router: Router) {}
 
   ngOnInit() {
-    this.featured$ = this.productService.getFeaturedProducts();
+    this.productService.getFeaturedProducts().subscribe(
+      (products: Product[]) => {
+        this.featuredProducts = products;
+        this.loadingFeatured = false;
+      },
+      (error: any) => {
+        console.error('Error fetching all products', error);
+        this.loadingFeatured = false;
+      }
+    );
     this.productService.getAllOrganizedProducts().subscribe(
       (products: Product[]) => {
         this.allProducts = products;

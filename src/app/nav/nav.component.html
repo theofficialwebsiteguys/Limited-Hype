@@ -1,18 +1,23 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container-fluid">
-        <!-- Logo in the center -->
-        <a class="navbar-brand mx-auto" routerLink="/home">
-            <img src="assets/limited-hype-logo.png" id="logo" height="100" alt="Logo Description" />
-        </a>
-
         <!-- Navbar toggler button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+        <button class="navbar-toggler order-1 mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
             aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
+        <!-- Logo in the center -->
+        <a class="navbar-brand mx-auto order-2" routerLink="/home">
+            <img src="assets/limited-hype-logo.png" id="logo" height="100" alt="Logo Description" />
+        </a>
+
+        <!-- Search icon -->
+        <div class="search-icon order-3" (click)="toggleSearchBar()">
+            <i class="fas fa-search"></i>
+        </div>
+
         <!-- Left side links -->
-        <div class="collapse navbar-collapse justify-content-start" id="navbarScroll">
+        <div class="collapse first-menu navbar-collapse justify-content-start" id="navbarScroll">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
@@ -28,7 +33,7 @@
 
         <!-- Right side links -->
         <div class="collapse navbar-collapse second-menu justify-content-end" id="navbarScroll">
-            <ul class="navbar-nav mb-2 mb-lg-0">
+            <ul class="navbar-nav mb-lg-0">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="nikeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Nike
@@ -60,14 +65,32 @@
                         <li><a class="dropdown-item" routerLink="/clothing/limited-hype" routerLinkActive="active" (click)="closeMenu()">Limited Hype</a></li>
                     </ul>
                 </li>
-                <li class="cart-item" (click)="closeMenu()">
-                    <a class="cart" routerLink="/cart" routerLinkActive="active">
-                        <i class="fas fa-shopping-cart"></i>
+                <li class="nav-item">
+                    <a class="btn btn-primary cart-btn w-100" routerLink="/cart" routerLinkActive="active" (click)="closeMenu()">
+                        <i class="fas fa-shopping-cart"></i> Cart
                     </a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+
+<!-- Search Bar Container -->
+<div id="searchBarContainer" class="search-bar-container">
+    <input #searchInput type="text" class="search-bar" placeholder="Search..." (input)="onSearch($event)" />
+    <span class="close-search-bar" (click)="closeSearchBar()">&times;</span>
+    <div class="search-results-container">
+        <div *ngFor="let product of searchResults" class="search-result-item" (click)="viewProductDetail(product)">
+            <img [src]="product.imageUrl" alt="{{product.name}}" class="search-result-image" />
+            <div class="search-result-details">
+                <p class="search-result-name">{{ product.name }}</p>
+                <p class="search-result-category">{{ product.brand }}</p>
+            </div>
+        </div>
+        <div *ngIf="searchResults.length === 0" class="search-result-item">
+            <p>No results found</p>
+        </div>
+    </div>
+</div>
 
 <app-hero></app-hero>

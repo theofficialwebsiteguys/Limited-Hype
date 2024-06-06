@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -17,32 +17,43 @@ export class ProductService {
     this.fetchProductsFromServer();
   }
 
+  private getToken(): string | null {
+    return localStorage.getItem('accessToken');
+  }
+
+  private getHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   private fetchProductsFromServer(): void {
-    this.http.get<any[]>(this.apiUrl).pipe(
+    this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders(), withCredentials: true }).pipe(
       map(data => {
         const organizedProductsMap = new Map<string, Product>();
         const variants: any[] = [];
   
         data.forEach((product: any) => {
-          const variantParentId = product.variant_parent_id;
-          const featured = product.categories[0]?.name === 'featured';
-          
-          if (!variantParentId) {
-            // It's a parent product
-            const newProduct = new Product(
-              product.id,
-              organizedProductsMap.size,
-              product.name,
-              product.image_url,
-              product.brand?.name,
-              featured,
-              [{ size: product.variant_options[0]?.value, price: product.price_including_tax }]
-            );
-            organizedProductsMap.set(product.id, newProduct);
-          } else {
-            // It's a variant
-            variants.push(product);
-          }
+            const variantParentId = product.variant_parent_id;
+            const featured = product.categories[0]?.name === 'featured';
+            
+            if (!variantParentId) {
+              // It's a parent product
+              const newProduct = new Product(
+                product.id,
+                organizedProductsMap.size,
+                product.name,
+                product.image_url,
+                product.brand?.name,
+                featured,
+                [{ size: product.variant_options[0]?.value, price: product.price_including_tax }]
+              );
+              organizedProductsMap.set(product.id, newProduct);
+            } else {
+              // It's a variant
+              variants.push(product);
+            }
         });
   
         // Process variants and associate them with their parent products
@@ -90,7 +101,9 @@ export class ProductService {
     ).subscribe();
   }
   
-  
+  getProductInventory(id: string): Observable<any> {
+    return this.http.get<any>(this.apiUrl + `/${id}/inventory`, { headers: this.getHeaders(), withCredentials: true });
+  }
 
   getAllOrganizedProducts(): Observable<Product[]> {
     return this.organizedProducts$.pipe(

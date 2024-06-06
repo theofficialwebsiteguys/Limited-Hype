@@ -19,6 +19,8 @@ export class CartComponent implements OnInit{
     this.cartService.cart$.subscribe(cart => {
       this.cart = cart;
     });
+
+    console.log(this.cart);
   }
 
   removeFromCart(product: any): void {

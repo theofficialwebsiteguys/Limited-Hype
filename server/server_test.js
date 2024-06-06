@@ -1,74 +1,84 @@
-const stripe = require('stripe')('sk_test_51POOsRAtSJLPfYWYzKygHZrTqLVLZT1qeygJwmtRtEOcGFSuXW2elncPen7s33Bj05TVdAORvClGb22qoJI8IRqm00oMB0K7LZ');
 const express = require('express');
 const axios = require('axios');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const NodeCache = require('node-cache');
 const app = express();
 
-app.use(bodyParser.json());
-
-// Middleware to handle CORS
-app.use(cors({
-  origin: 'http://localhost:4200', // Replace with your actual frontend URL
-  credentials: true,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: 'Content-Type,Authorization'
-}));
+// Use CORS to allow requests from your Angular app
+app.use(cors({ origin: 'http://localhost:4200' }));
 
 // Initialize cache
 const inventoryCache = new NodeCache({ stdTTL: 600, checkperiod: 120 });
 
-// Your existing routes here
+// Replace these with your Lightspeed app details
+const clientId = '66Yi7ku0rsjjhPUIQjkGVNSI169kfjm1';
+const clientSecret = 'tRS7jH5NqhMEj6x0SWBhDfRXfEMB0kJc';
+const redirectUri = 'http://localhost:3000/callback'; // Update with your actual Heroku URL
 
 app.get('/home', (req, res) => {
   res.status(200).json('Welcome, your app is working well');
 });
 
-app.post('/create-checkout-session', async (req, res) => {
-  const { items } = req.body;
+// Step 3: Start the OAuth flow
+app.get('/authorize', (req, res) => {
+  const state = 'random_state_string'; // Replace with a real, securely generated random string
+  const authorizationUrl = `https://secure.retail.lightspeed.app/connect?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}`;
+  res.redirect(authorizationUrl);
+});
+
+app.get('/callback', async (req, res) => {
+  const authorizationCode = req.query.code;
+  const state = req.query.state;
+
+  // Validate state to prevent CSRF attacks
+
+  console.log(`Authorization Code: ${authorizationCode}`);
+  console.log(`State: ${state}`);
 
   try {
-    // Create an array to hold line item objects for Stripe
-    const line_items = [];
+    const tokenResponse = await axios.post(
+      'https://limitedhypellp.retail.lightspeed.app/api/1.0/token',
+      {
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        code: authorizationCode,
+        grant_type: 'authorization_code'
+      },
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    );
 
-    for (const item of req.body) {
-      // Create a product
-      const product = await stripe.products.create({
-        name: item.name,
-      });
+    console.log('Token Response:', tokenResponse.data);
 
-      // Create a price for the product
-      const price = await stripe.prices.create({
-        unit_amount: item.price, // Price in cents
-        currency: 'usd',
-        product: product.id,
-      });
+    const accessToken = tokenResponse.data.access_token;
 
-      // Add the line item for the session
-      line_items.push({
-        price: price.id,
-        quantity: item.quantity,
-      });
+    // Check if the access token is present
+    if (!accessToken) {
+      throw new Error('Access token not found in the response');
     }
 
-    console.log(line_items)
-    // Create the checkout session
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded',
-      line_items: line_items,
-      mode: 'payment',
-      return_url: `http://localhost:4200/return?session_id={CHECKOUT_SESSION_ID}`,
-    });
+    // Store the access token securely
+    // For example, you might store it in a session or a secure database
+    console.log(accessToken);
 
-    console.log(session)
-
-    res.send({ clientSecret: session.client_secret });
+    res.json({ message: 'Authorization successful', accessToken: accessToken });
   } catch (error) {
-    console.error('Error creating checkout session:', error); // Log the error for debugging
-    res.status(500).send({ error: error.message });
+    console.error('Error exchanging authorization code for access token:', error.message);
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.status);
+      console.error('Response headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('Request data:', error.request);
+    }
+    res.status(500).json({ message: 'Error exchanging authorization code for access token', error: error.message });
   }
 });
+
 
 app.get('/api/products', async (req, res) => {
   let allProducts = [];
@@ -79,7 +89,7 @@ app.get('/api/products', async (req, res) => {
     while (hasMorePages) {
       const response = await axios.get('https://limitedhypellp.retail.lightspeed.app/api/2.0/products', {
         headers: {
-          'Authorization': 'Bearer lsxs_at_KQGVErVSQZkq3464ieDKNwVMDehW6lVo'
+          'Authorization': 'Bearer lsxs_pt_AESKmWBiELJqbrJyxMJ3jsS5yFBySTQR' // Replace with dynamic token storage
         },
         params: {
           after: after
@@ -146,7 +156,6 @@ app.get('/api/products/:id/inventory', async (req, res) => {
   }
 });
 
-
 async function getInventory(productId) {
   // Check if inventory is cached
   const cachedInventory = inventoryCache.get(productId);
@@ -157,7 +166,7 @@ async function getInventory(productId) {
   // Fetch inventory from API
   const response = await axios.get(`https://limitedhypellp.retail.lightspeed.app/api/2.0/products/${productId}/inventory`, {
     headers: {
-      'Authorization': 'Bearer lsxs_at_KQGVErVSQZkq3464ieDKNwVMDehW6lVo' // Replace with dynamic token storage
+      'Authorization': 'Bearer lsxs_pt_AESKmWBiELJqbrJyxMJ3jsS5yFBySTQR' // Replace with dynamic token storage
     }
   });
 

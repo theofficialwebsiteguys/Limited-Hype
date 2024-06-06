@@ -15,7 +15,7 @@ export class CartService {
     this.cart.next([...currentCart, product]);
     this.saveCart();
   }
-
+  
   getCart() {
     return this.cart.value;
   }
@@ -33,6 +33,10 @@ export class CartService {
   clearCart() {
     this.cart.next([]);
     this.saveCart();
+  }
+
+  isInCart(product: any): boolean {
+    return this.cart.value.some(cartItem => cartItem.id === product.id && cartItem.size === product.size);
   }
 
   private saveCart() {

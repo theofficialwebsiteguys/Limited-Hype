@@ -138,3 +138,21 @@
   .btn-dark:hover {
     background-color: #5d4037;
   }
+
+
+  .size {
+    cursor: pointer;
+    padding: 5px;
+    border: 1px solid #ccc;
+    margin: 2px;
+    display: inline-block;
+    width: 40px;
+    text-align: center;
+  }
+  
+  .size.disabled {
+    text-decoration: line-through;
+    color: #999;
+    cursor: not-allowed;
+  }
+  

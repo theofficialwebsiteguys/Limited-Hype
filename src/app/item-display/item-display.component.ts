@@ -52,8 +52,8 @@ export class ItemDisplayComponent implements OnInit {
       .subscribe(product => {
         this.product = product;
         this.populateSizes();
-        console.log(product)
-        console.log(this.sizes)
+        console.log(product);
+        console.log(this.sizes);
       });
   }
 
@@ -75,13 +75,23 @@ export class ItemDisplayComponent implements OnInit {
   }
 
   selectSize(size: string): void {
-    this.selectedSize = size;
+    if (!this.isInCart({ ...this.product, size: size })) {
+      this.selectedSize = size;
+    }
   }
 
   addToCart(): void {
-    const productToAdd = { ...this.product, size: this.selectedSize };
-    console.log(productToAdd)
+    const productToAdd = { ...this.product, size: this.sizes.length > 0 ? this.selectedSize : null };
+    console.log(productToAdd);
     this.cartService.addToCart(productToAdd);
     this.router.navigateByUrl('/cart');
+  }
+
+  isInCart(product: any): boolean {
+    return this.cartService.isInCart(product);
+  }
+
+  getProductWithSize(size: string) {
+    return { ...this.product, size: size };
   }
 }
