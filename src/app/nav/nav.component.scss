@@ -1,256 +1,298 @@
 .navbar {
-    background-color: transparent !important;
-    box-shadow: none;
-    position: absolute;
-    width: 100%;
-    top: 0;
-    z-index: 1030;
-    padding-top: 35px; /* Changed from margin-top to padding-top to prevent content from being hidden under the navbar */
-    font-size: 20px;
-  }
-  
-  .navbar-nav .nav-link {
-    color: white !important;
-    cursor: pointer;
+  background-color: transparent !important;
+  box-shadow: none;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  z-index: 1030;
+  padding-top: 35px;
+  /* Changed from margin-top to padding-top to prevent content from being hidden under the navbar */
+  font-size: 20px;
+}
+
+.navbar-nav .nav-link {
+  color: white !important;
+  cursor: pointer;
+}
+
+.navbar-nav {
+  margin-top: 20px;
+  margin-right: 40px;
+}
+
+.nav-link:hover,
+.nav-link.active,
+.nav-link:focus {
+  border-bottom: 3px solid;
+  /* Added thickness for visibility */
+  height: 45px;
+}
+
+.cart-item {
+  margin: auto !important;
+}
+
+.fa-search {
+  margin-top: 2rem;
+  margin-right: 2rem;
+}
+
+.navbar-nav .cart {
+  color: white !important;
+  cursor: pointer;
+}
+
+.cart:hover,
+.cart.active,
+.cart:focus {
+  cursor: pointer;
+  height: 45px;
+  color: white !important;
+}
+
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.5);
+  /* Adjusted for better visibility */
+  background-color: white;
+  position: absolute;
+  /* Fix the position */
+  left: 10px;
+  /* Align to the left */
+}
+
+.search-icon {
+  cursor: pointer;
+  color: white;
+  position: absolute;
+  /* Fix the position */
+  right: 10px;
+  /* Align to the right */
+  font-size: 24px;
+}
+
+
+
+@media (max-width: 992px) {
+  .navbar-collapse {
+    overflow-y: visible;
+    /* Ensure no vertical scroll is applied */
+    max-height: none;
+    /* Remove any maximum height restrictions */
+    background-color: white;
+    margin-top: 110px;
   }
 
   .navbar-nav {
-    margin-top: 20px;
-    margin-right: 40px;
-  }
-  
-  .nav-link:hover, .nav-link.active, .nav-link:focus {
-    border-bottom: 3px solid; /* Added thickness for visibility */
-    height: 45px;
-  }
-  
-  .cart-item {
-    margin: auto !important;
+    display: block;
+    /* Ensure nav-items are not inline to allow better visibility */
+    width: 100%;
+    /* Full width to better utilize space */
   }
 
-  .fa-search {
-    margin-top: 2rem;
-    margin-right: 2rem;
+  .navbar-nav .nav-link {
+    padding: 8px 15px;
+    /* Increased padding for better touch targets */
+    color: black !important;
   }
-  
-  .navbar-nav .cart {
-    color: white !important;
-    cursor: pointer;
-  }
-  
-  .cart:hover, .cart.active, .cart:focus {
-    cursor: pointer;
-    height: 45px;
-    color: white !important;
-  }
-  
+
   .navbar-toggler {
-    border-color: rgba(255, 255, 255, 0.5); /* Adjusted for better visibility */
-    background-color: white;
-    position: absolute; /* Fix the position */
-    left: 10px; /* Align to the left */
+    margin-left: 10px;
+    /* Ensure it stays on the left on mobile */
+    z-index: 1050;
+    /* Ensure it stays above the navbar */
   }
-  
+
   .search-icon {
-    cursor: pointer;
-    color: white;
-    position: absolute; /* Fix the position */
-    right: 10px; /* Align to the right */
-    font-size: 24px;
+    right: 10px;
+    /* Ensure it stays on the right on mobile */
+    z-index: 1050;
+    /* Ensure it stays above the navbar */
   }
 
+  /* First menu shadow on left, top, and right */
+  .first-menu {
+    box-shadow: -10px -10px 10px rgba(0, 0, 0, 0.1), 10px -10px 10px rgba(0, 0, 0, 0.1), 10px 0px 10px rgba(0, 0, 0, 0.1);
+  }
 
-  
-  @media (max-width: 992px) {
-    .navbar-collapse {
-      overflow-y: visible; /* Ensure no vertical scroll is applied */
-      max-height: none; /* Remove any maximum height restrictions */
-      background-color: white;
-      margin-top: 110px;
-    }
-  
-    .navbar-nav {
-      display: block; /* Ensure nav-items are not inline to allow better visibility */
-      width: 100%; /* Full width to better utilize space */
-    }
-  
-    .navbar-nav .nav-link {
-      padding: 8px 15px; /* Increased padding for better touch targets */
-      color: black !important;
-    }
-  
-    .navbar-toggler {
-      margin-left: 10px; /* Ensure it stays on the left on mobile */
-      z-index: 1050; /* Ensure it stays above the navbar */
-    }
-  
-    .search-icon {
-      right: 10px; /* Ensure it stays on the right on mobile */
-      z-index: 1050; /* Ensure it stays above the navbar */
-    }
-
-    /* First menu shadow on left, top, and right */
-    .first-menu {
-        box-shadow: -10px -10px 10px rgba(0, 0, 0, 0.1), 10px -10px 10px rgba(0, 0, 0, 0.1), 10px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Second menu shadow on left, bottom, and right, without shadow on the top */
-    .second-menu {
-        box-shadow: -10px 10px 10px rgba(0, 0, 0, 0.1), 10px 10px 10px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
-    }
-
-  }
-  
-  .navbar-brand {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .logo-container img {
-    max-height: 100px;
-    height: auto;
-  }
-  
-  .navbar-collapse {
-    flex-grow: 1;
-  }
-  
-  .nav-item {
-    margin: 0 10px;
-  }
-  
-  .nav-item.dropdown:hover .dropdown-menu {
-    display: block;
-    margin-top: 0; /* Adjust as needed */
-  }
-  
-  .container-fluid {
-    align-items: normal;
-    padding-left: 50px;
-    padding-right: 50px;
-  }
-  
+  /* Second menu shadow on left, bottom, and right, without shadow on the top */
   .second-menu {
-    margin: 0 !important;
+    box-shadow: -10px 10px 10px rgba(0, 0, 0, 0.1), 10px 10px 10px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
   }
-  
-  /* Default color for the cart icon */
-  .cart i {
-    color: white;
-  }
-  
-  .cart:hover, .cart.active, .cart:focus {
-    color: white !important;
-  }
-  
-  @media (max-width: 992px) {
-    .cart i {
-      color: black;
-    }
-  }
-  
-  .search-bar-container {
-    display: none;
-    position: absolute;
-    top: 50px; /* Adjust as needed */
-    right: 10px; /* Align to the right edge of the screen */
-    width: 500px; /* Fixed width */
-    background-color: white;
-    padding: 10px;
-    z-index: 1030;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .search-bar {
-    width: 100%;
-    padding: 10px;
-    font-size: 18px;
-    border: 1px solid #ccc;
-  }
-  
-  .search-results-container {
-    margin-top: 10px;
-  }
-  
-  @media (max-width: 992px) {
-    .search-bar-container {
-      width: calc(100% - 20px); /* Full width with some padding */
-      right: 10px;
-      left: 10px;
-    }
 
-    .navbar-nav{
-        margin: 0;
-    }
+}
+
+.navbar-brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.logo-container img {
+  max-height: 100px;
+  height: auto;
+}
+
+.navbar-collapse {
+  flex-grow: 1;
+}
+
+.nav-item {
+  margin: 0 10px;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+  margin-top: 0;
+  /* Adjust as needed */
+}
+
+.container-fluid {
+  align-items: normal;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.second-menu {
+  margin: 0 !important;
+}
+
+/* Default color for the cart icon */
+.cart i {
+  color: white;
+}
+
+.cart:hover,
+.cart.active,
+.cart:focus {
+  color: white !important;
+}
+
+@media (max-width: 992px) {
+  .cart i {
+    color: black;
   }
-  
-  .search-results-container {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    max-height: 400px;
-    overflow-y: auto;
-    z-index: 1000;
+}
+
+.search-bar-container {
+  display: none;
+  position: absolute;
+  top: 50px;
+  /* Adjust as needed */
+  right: 10px;
+  /* Align to the right edge of the screen */
+  width: 500px;
+  /* Fixed width */
+  background-color: white;
+  padding: 10px;
+  z-index: 1030;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+}
+
+.search-results-container {
+  margin-top: 10px;
+}
+
+@media (max-width: 992px) {
+  .search-bar-container {
+    width: calc(100% - 20px);
+    /* Full width with some padding */
+    right: 10px;
+    left: 10px;
   }
-  
-  .search-result-item {
+
+  .navbar-nav {
+    margin: 0;
+  }
+}
+
+.search-results-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.search-result-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-result-name {
+  font-weight: bold;
+}
+
+.search-result-category {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.close-search-bar {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  font-size: 40px;
+  cursor: pointer;
+}
+
+.cart-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.cart-btn:hover {
+  background-color: #0056b3;
+}
+
+
+
+@media only screen and (max-width: 1406px) {
+  #navbarScroll {
+    place-content: center !important;
+  }
+
+  .navbar-nav {
     display: flex;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
+    width: 300px;
+    justify-content: space-evenly;
   }
-  
-  .search-result-item:last-child {
-    border-bottom: none;
-  }
-  
-  .search-result-image {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 5px;
-    margin-right: 10px;
-  }
-  
-  .search-result-details {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .search-result-name {
-    font-weight: bold;
-  }
-  
-  .search-result-category {
-    font-size: 0.9em;
-    color: #666;
-  }
-  
-  .close-search-bar {
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    font-size: 40px;
-    cursor: pointer;
-  }
-  
-  .cart-btn {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-  }
-  
-  .cart-btn:hover {
-    background-color: #0056b3;
-  }
+}
