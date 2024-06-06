@@ -104,7 +104,7 @@ export class HeroComponent {
           this.heroHeight = '30vh';
           break;
         case '/shop':
-          this.backgroundImage = 'assets/hero.webp';
+          this.backgroundImage = 'assets/shop/1.JPG';
           this.page_title = 'The Shop';
           this.heroHeight = '30vh';
           break;
@@ -148,5 +148,15 @@ export class HeroComponent {
       void (element as HTMLElement).offsetWidth; // Trigger reflow
       this.renderer.addClass(element, 'fade-in-down');
     }
+  }
+
+  onCanPlay(event: Event): void {
+    const videoElement = event.target as HTMLVideoElement;
+    videoElement.play();
+  }
+
+  onLoadedMetadata(event: Event): void {
+    const videoElement = event.target as HTMLVideoElement;
+    videoElement.muted = true;
   }
 }

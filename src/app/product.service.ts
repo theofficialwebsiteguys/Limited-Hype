@@ -10,6 +10,7 @@ import { Product } from './models/product';
 export class ProductService {
 
   private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com/api/products'; // URL of your Node.js server
+  //private apiUrl = 'http://localhost:3000/api/products';
   private organizedProductsSubject = new BehaviorSubject<Product[]>(this.loadProducts());
   organizedProducts$ = this.organizedProductsSubject.asObservable();
 

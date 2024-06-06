@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-shop',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './shop.component.html',
-  styleUrl: './shop.component.scss'
+  styleUrls: ['./shop.component.scss']
 })
-export class ShopComponent {
+export class ShopComponent implements OnInit {
   imagePaths: string[] = [
     'assets/shop/1.JPG',
     'assets/shop/2.JPG',
@@ -25,8 +25,23 @@ export class ShopComponent {
     'assets/shop/15.JPG'
   ];
 
+  imagesLoaded: { [key: string]: boolean } = {};
+
   constructor() { }
 
   ngOnInit(): void {
+    this.imagePaths.forEach(path => this.imagesLoaded[path] = false);
+  }
+
+  onImageLoad(imagePath: string): void {
+    this.imagesLoaded[imagePath] = true;
+  }
+
+  onImageError(imagePath: string): void {
+    this.imagesLoaded[imagePath] = true; // Treat errors as "loaded" to remove spinner
+  }
+
+  isLoading(imagePath: string): boolean {
+    return !this.imagesLoaded[imagePath];
   }
 }

@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 // Middleware to handle CORS
 app.use(cors({
-  origin: 'https://theofficialwebsiteguys.github.io', // Replace with your actual frontend URL
+  origin: 'http://localhost:4200', // Replace with your actual frontend URL
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'Content-Type,Authorization'
