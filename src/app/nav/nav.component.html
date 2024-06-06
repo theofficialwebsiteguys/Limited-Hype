@@ -22,9 +22,9 @@
                 <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
                 </li>
-                <li class="nav-item" (click)="closeMenu()">
+                <!-- <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/story" routerLinkActive="active">Our Story</a>
-                </li>
+                </li> -->
                 <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/shop" routerLinkActive="active">The Shop</a>
                 </li>
@@ -44,11 +44,30 @@
                         <li><a class="dropdown-item" routerLink="/nike/supreme" routerLinkActive="active" (click)="closeMenu()">Supreme</a></li>
                     </ul>
                 </li>
-                <li class="nav-item" (click)="closeMenu()">
-                    <a class="nav-link" routerLink="/jordan" routerLinkActive="active">Jordan</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="nikeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Jordan
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nikeDropdown">
+                        <li><a class="dropdown-item" routerLink="/jordan-1-high" routerLinkActive="active" (click)="closeMenu()">Jordan 1 High</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan-1-mid" routerLinkActive="active" (click)="closeMenu()">Jordan 1 Mid</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan-1-low" routerLinkActive="active" (click)="closeMenu()">Jordan 1 Low</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan-3" routerLinkActive="active" (click)="closeMenu()">Jordan 3</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan-11" routerLinkActive="active" (click)="closeMenu()">Jordan 11</a></li>
+                    </ul>
                 </li>
-                <li class="nav-item" (click)="closeMenu()">
-                    <a class="nav-link" routerLink="/yeezy" routerLinkActive="active">Yeezy</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="nikeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Yeezy
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nikeDropdown">
+                        <li><a class="dropdown-item" routerLink="yeezy/yeezy-slide" routerLinkActive="active" (click)="closeMenu()">Yeezy Slide</a></li>
+                        <li><a class="dropdown-item" routerLink="yeezy/foam-rnnr" routerLinkActive="active" (click)="closeMenu()">Foam Rnnr</a></li>
+                        <li><a class="dropdown-item" routerLink="yeezy/350" routerLinkActive="active" (click)="closeMenu()">350</a></li>
+                        <li><a class="dropdown-item" routerLink="yeezy/450" routerLinkActive="active" (click)="closeMenu()">450</a></li>
+                        <li><a class="dropdown-item" routerLink="yeezy/500" routerLinkActive="active" (click)="closeMenu()">500</a></li>
+                        <li><a class="dropdown-item" routerLink="yeezy/700" routerLinkActive="active" (click)="closeMenu()">700</a></li>
+                    </ul>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="clothingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

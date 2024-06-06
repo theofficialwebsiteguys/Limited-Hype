@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 // Middleware to handle CORS
 app.use(cors({
-  origin: 'http://localhost:4200', // Replace with your actual frontend URL
+  origin: 'https://theofficialwebsiteguys.github.io', // Replace with your actual frontend URL
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'Content-Type,Authorization'
@@ -58,7 +58,7 @@ app.post('/create-checkout-session', async (req, res) => {
       ui_mode: 'embedded',
       line_items: line_items,
       mode: 'payment',
-      return_url: `http://localhost:4200/return?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `https://theofficialwebsiteguys.github.io/Limited-Hype/return?session_id={CHECKOUT_SESSION_ID}`,
     });
 
     console.log(session)

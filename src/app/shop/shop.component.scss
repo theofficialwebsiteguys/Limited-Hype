@@ -1,0 +1,42 @@
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .gallery-item {
+    flex: 1 1 calc(33% - 30px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 300px; /* Set a fixed height for all items */
+  }
+  
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure images cover the entire area while maintaining aspect ratio */
+    display: block;
+  }
+  
+  @media (max-width: 768px) {
+    .gallery-item {
+      flex: 1 1 calc(50% - 20px);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .gallery-item {
+      flex: 1 1 calc(100% - 10px);
+    }
+  }
+
+  .lead{
+    font-size: 42px;
+  }
+
+  .sub{
+    font-size: 30px;
+  }
+  

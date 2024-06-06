@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { loadStripe } from '@stripe/stripe-js';
 import { PaymentService } from '../payment.service';
@@ -11,7 +11,7 @@ import { PaymentService } from '../payment.service';
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
   cart: any[] = [];
   cartTotal = 0;
 
@@ -20,7 +20,10 @@ export class CheckoutComponent implements OnInit {
 
   lineItems: any[]= [];
 
-  
+  checkout: any;
+
+  @ViewChild('checkoutElement', { static: true }) checkoutElement!: ElementRef;
+
   constructor(private router: Router, private paymentService: PaymentService) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
@@ -28,20 +31,24 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-
   async ngOnInit(): Promise<void> {
-    console.log(this.cart)
+    console.log(this.cart);
     if (!this.cart.length) {
       this.router.navigate(['/cart']);
     } else {
       this.calculateTotal();
     }
 
-    console.log(this.cart)
-
+    console.log(this.cart);
 
     this.stripe = await loadStripe('pk_test_51POOsRAtSJLPfYWYi6NnxCtQ1hBBJwgdLm6Mh8ARbkWDsSvI0naQxwMYRRPKxoPKRel3Jx22ovNHywU2AagBD1sB00Ueys9YAE');
     this.initialize();
+  }
+
+  ngOnDestroy(): void {
+    if (this.checkout) {
+      this.checkout.destroy();
+    }
   }
 
   calculateTotal() {
@@ -52,29 +59,27 @@ export class CheckoutComponent implements OnInit {
   }
 
   async initialize() {
+    console.log(this.cart);
 
-    console.log(this.cart)
-
-    this.cart.forEach((cartItem:any) => {
-        const variant = cartItem.variant.find((variant: any) => variant.size === cartItem.size);
-        console.log(variant)
-        const itemName = cartItem.name;
-        const price = variant ? variant.price : cartItem.variant[0].price;
-        const quantity = 1;
-        this.lineItems.push({name: itemName, price: price*100, quantity: quantity})
+    this.cart.forEach((cartItem: any) => {
+      const variant = cartItem.variant.find((variant: any) => variant.size === cartItem.size);
+      console.log(variant);
+      const itemName = cartItem.name;
+      const price = variant ? variant.price : cartItem.variant[0].price;
+      const quantity = 1;
+      this.lineItems.push({ name: itemName, price: price * 100, quantity: quantity });
     });
-
 
     const fetchClientSecret = async () => {
       const response = await this.paymentService.createCheckoutSession(this.lineItems).toPromise();
       return response!.clientSecret;
     };
 
-    const checkout = await this.stripe.initEmbeddedCheckout({
+    this.checkout = await this.stripe.initEmbeddedCheckout({
       fetchClientSecret,
     });
 
     // Mount Checkout
-    checkout.mount('#checkout');
+    this.checkout.mount('#checkout');
   }
 }

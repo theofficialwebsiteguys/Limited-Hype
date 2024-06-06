@@ -31,7 +31,7 @@ export class PaymentService {
 
   createCheckoutSession(products: { name: string, price: number, quantity: number }[]): Observable<{ clientSecret: string }> {
     console.log(products)
-    return this.http.post<{ clientSecret: string }>('http://localhost:3000/create-checkout-session', products);
+    return this.http.post<{ clientSecret: string }>('https://limited-hype-server-fc852c1e4c1b.herokuapp.com/create-checkout-session', products);
   }
   
 }

@@ -9,7 +9,7 @@ import { Product } from './models/product';
 })
 export class ProductService {
 
-  private apiUrl = 'http://localhost:3000/api/products'; // URL of your Node.js server
+  private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com/api/products'; // URL of your Node.js server
   private organizedProductsSubject = new BehaviorSubject<Product[]>(this.loadProducts());
   organizedProducts$ = this.organizedProductsSubject.asObservable();
 
@@ -35,8 +35,12 @@ export class ProductService {
         const variants: any[] = [];
   
         data.forEach((product: any) => {
+            if (product.name.includes("GRAND OPENING")) {
+              return; 
+            }
             const variantParentId = product.variant_parent_id;
             const featured = product.categories[0]?.name === 'featured';
+            const tag = featured ? product.categories[1]?.name : product.categories[0]?.name;
             
             if (!variantParentId) {
               // It's a parent product
@@ -47,6 +51,7 @@ export class ProductService {
                 product.image_url,
                 product.brand?.name,
                 featured,
+                tag,
                 [{ size: product.variant_options[0]?.value, price: product.price_including_tax }]
               );
               organizedProductsMap.set(product.id, newProduct);
@@ -73,6 +78,7 @@ export class ProductService {
               '', // Placeholder image URL
               '', // Placeholder brand
               false, // Placeholder featured flag
+              '',
               [{ size: variant.variant_options[0]?.value, price: variant.price_including_tax }]
             );
             organizedProductsMap.set(variant.variant_parent_id, placeholderProduct);

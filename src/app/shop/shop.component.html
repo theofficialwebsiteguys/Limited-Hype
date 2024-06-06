@@ -1,1 +1,11 @@
-<p>shop works!</p>
+<div class="text-center m-5">
+    <h1 class="lead">Check out our in store shop!</h1>
+    <h4 class="lead sub">Located in Kittery, Maine</h4>
+</div>
+
+<div class="gallery m-5">
+    <div class="gallery-item" *ngFor="let imagePath of imagePaths">
+      <img [src]="imagePath" alt="Shop Image">
+    </div>
+  </div>
+  

@@ -7,6 +7,7 @@ export class Product {
       public imageUrl: string,
       public brand: string,
       public featured: boolean,
+      public tag: string,
       public variant: {
         size: string,
         price: string

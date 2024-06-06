@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private clientId = '66Yi7ku0rsjjhPUIQjkGVNSI169kfjm1';
-  private redirectUri = 'http://localhost:3000/callback'; // Update with your actual URL
+  private redirectUri = 'hhttps://limited-hype-server-fc852c1e4c1b.herokuapp.com/callback'; // Update with your actual URL
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -19,7 +19,7 @@ export class AuthService {
   }
 
   handleCallback(code: string, state: string) {
-    this.http.get(`http://localhost:3000/callback`, { params: { code, state } })
+    this.http.get(`https://limited-hype-server-fc852c1e4c1b.herokuapp.com/callback`, { params: { code, state } })
       .subscribe((response: any) => {
         if (response.accessToken) {
           localStorage.setItem('accessToken', response.accessToken);

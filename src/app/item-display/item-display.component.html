@@ -5,7 +5,7 @@
     </div>
     <div class="col-12 col-md-6">
       <h2>{{product.name}}</h2>
-      <p>{{product.variant[0]?.price | currency}}</p>
+      <p>{{product.variant[0].price | currency}}</p>
       <div class="size-selection" *ngIf="sizes.length > 0">
         <span *ngFor="let size of sizes" 
               class="size" 
@@ -39,7 +39,7 @@
           </div>
           <div class="card-body text-center">
             <h5 class="card-title">{{product.name}}</h5>
-            <p class="card-text">{{product.variant[0]?.price | currency}}</p>
+            <p class="card-text">{{product.variant[0].price | currency}}</p>
           </div>
         </div>
       </div>
