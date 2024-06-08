@@ -45,17 +45,77 @@ export class HeroComponent {
       switch (url) {
         case '/nike':
           this.backgroundImage = 'assets/nike-hero.jpg';
-          this.page_title = 'Nike';
+          this.page_title = 'All Nike';
           this.heroHeight = '30vh';
           break;
         case '/jordan':
           this.backgroundImage = 'assets/jordan-hero.jpg';
-          this.page_title = 'Jordan';
+          this.page_title = 'All Jordan';
+          this.heroHeight = '30vh';
+          break;
+        case '/jordan/jordan-1-high':
+          this.backgroundImage = 'assets/jordan-hero.jpg';
+          this.page_title = 'Jordan 1 High';
+          this.heroHeight = '30vh';
+          break;
+        case '/jordan/jordan-1-mid':
+          this.backgroundImage = 'assets/jordan-hero.jpg';
+          this.page_title = 'Jordan 1 Mid';
+          this.heroHeight = '30vh';
+          break;
+        case '/jordan/jordan-1-low':
+          this.backgroundImage = 'assets/jordan-hero.jpg';
+          this.page_title = 'Jordan 1 low';
+          this.heroHeight = '30vh';
+          break;
+        case '/jordan/jordan-3':
+          this.backgroundImage = 'assets/jordan-hero.jpg';
+          this.page_title = 'Jordan 3';
+          this.heroHeight = '30vh';
+          break;
+        case '/jordan/jordan-11':
+          this.backgroundImage = 'assets/jordan-hero.jpg';
+          this.page_title = 'Jordan 11';
           this.heroHeight = '30vh';
           break;
         case '/yeezy':
           this.backgroundImage = 'assets/yeezy-hero.jpg';
-          this.page_title = 'Yeezy';
+          this.page_title = 'All Yeezy';
+          this.heroHeight = '30vh';
+          break;
+        case '/yeezy/slide':
+          this.backgroundImage = 'assets/yeezy-hero.jpg';
+          this.page_title = 'Yeezy Slide';
+          this.heroHeight = '30vh';
+          break;
+        case '/yeezy/foam-rnnr':
+          this.backgroundImage = 'assets/yeezy-hero.jpg';
+          this.page_title = 'Yeezy Foam Rnnr';
+          this.heroHeight = '30vh';
+          break;
+        case '/yeezy/350':
+          this.backgroundImage = 'assets/yeezy-hero.jpg';
+          this.page_title = 'Yeezy 350';
+          this.heroHeight = '30vh';
+          break;
+        case '/yeezy/450':
+          this.backgroundImage = 'assets/yeezy-hero.jpg';
+          this.page_title = 'Yeezy 450';
+          this.heroHeight = '30vh';
+          break;
+        case '/yeezy/500':
+          this.backgroundImage = 'assets/yeezy-hero.jpg';
+          this.page_title = 'Yeezy 500';
+          this.heroHeight = '30vh';
+          break;
+        case '/yeezy/700':
+          this.backgroundImage = 'assets/yeezy-hero.jpg';
+          this.page_title = 'Yeezy 700';
+          this.heroHeight = '30vh';
+          break;
+        case '/clothing':
+          this.backgroundImage = 'assets/clothing-hero.jpg';
+          this.page_title = 'All Clothing';
           this.heroHeight = '30vh';
           break;
         case '/clothing/essentials':
@@ -116,11 +176,6 @@ export class HeroComponent {
         case '/checkout':
           this.backgroundImage = 'assets/hero.webp';
           this.page_title = 'Checkout';
-          this.heroHeight = '30vh';
-          break;
-        case '/nike/all':
-          this.backgroundImage = 'assets/hero.webp';
-          this.page_title = 'All Nikes';
           this.heroHeight = '30vh';
           break;
         case '/nike/sb':

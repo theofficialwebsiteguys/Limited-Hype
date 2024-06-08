@@ -39,7 +39,7 @@
                         Nike
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="nikeDropdown">
-                        <li><a class="dropdown-item" routerLink="/nike/all" routerLinkActive="active" (click)="closeMenu()">All Nikes</a></li>
+                        <li><a class="dropdown-item" routerLink="/nike" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">View All</a></li>
                         <li><a class="dropdown-item" routerLink="/nike/sb" routerLinkActive="active" (click)="closeMenu()">Nike SB</a></li>
                         <li><a class="dropdown-item" routerLink="/nike/supreme" routerLinkActive="active" (click)="closeMenu()">Supreme</a></li>
                     </ul>
@@ -49,11 +49,12 @@
                         Jordan
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="nikeDropdown">
-                        <li><a class="dropdown-item" routerLink="/jordan-1-high" routerLinkActive="active" (click)="closeMenu()">Jordan 1 High</a></li>
-                        <li><a class="dropdown-item" routerLink="/jordan-1-mid" routerLinkActive="active" (click)="closeMenu()">Jordan 1 Mid</a></li>
-                        <li><a class="dropdown-item" routerLink="/jordan-1-low" routerLinkActive="active" (click)="closeMenu()">Jordan 1 Low</a></li>
-                        <li><a class="dropdown-item" routerLink="/jordan-3" routerLinkActive="active" (click)="closeMenu()">Jordan 3</a></li>
-                        <li><a class="dropdown-item" routerLink="/jordan-11" routerLinkActive="active" (click)="closeMenu()">Jordan 11</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">View All</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan/jordan-1-high" routerLinkActive="active" (click)="closeMenu()">Jordan 1 High</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan/jordan-1-mid" routerLinkActive="active" (click)="closeMenu()">Jordan 1 Mid</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan/jordan-1-low" routerLinkActive="active" (click)="closeMenu()">Jordan 1 Low</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan/jordan-3" routerLinkActive="active" (click)="closeMenu()">Jordan 3</a></li>
+                        <li><a class="dropdown-item" routerLink="/jordan/jordan-11" routerLinkActive="active" (click)="closeMenu()">Jordan 11</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -61,12 +62,13 @@
                         Yeezy
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="nikeDropdown">
-                        <li><a class="dropdown-item" routerLink="yeezy/yeezy-slide" routerLinkActive="active" (click)="closeMenu()">Yeezy Slide</a></li>
-                        <li><a class="dropdown-item" routerLink="yeezy/foam-rnnr" routerLinkActive="active" (click)="closeMenu()">Foam Rnnr</a></li>
-                        <li><a class="dropdown-item" routerLink="yeezy/350" routerLinkActive="active" (click)="closeMenu()">350</a></li>
-                        <li><a class="dropdown-item" routerLink="yeezy/450" routerLinkActive="active" (click)="closeMenu()">450</a></li>
-                        <li><a class="dropdown-item" routerLink="yeezy/500" routerLinkActive="active" (click)="closeMenu()">500</a></li>
-                        <li><a class="dropdown-item" routerLink="yeezy/700" routerLinkActive="active" (click)="closeMenu()">700</a></li>
+                        <li><a class="dropdown-item" routerLink="/yeezy" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">View All</a></li>
+                        <li><a class="dropdown-item" routerLink="/yeezy/slide" routerLinkActive="active" (click)="closeMenu()">Yeezy Slide</a></li>
+                        <li><a class="dropdown-item" routerLink="/yeezy/foam-rnnr" routerLinkActive="active" (click)="closeMenu()">Yeezy Foam Rnnr</a></li>
+                        <li><a class="dropdown-item" routerLink="/yeezy/350" routerLinkActive="active" (click)="closeMenu()">Yeezy 350</a></li>
+                        <li><a class="dropdown-item" routerLink="/yeezy/450" routerLinkActive="active" (click)="closeMenu()">Yeezy 450</a></li>
+                        <li><a class="dropdown-item" routerLink="/yeezy/500" routerLinkActive="active" (click)="closeMenu()">Yeezy 500</a></li>
+                        <li><a class="dropdown-item" routerLink="/yeezy/700" routerLinkActive="active" (click)="closeMenu()">Yeezy 700</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -74,6 +76,7 @@
                         Clothing
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="clothingDropdown">
+                        <li><a class="dropdown-item" routerLink="/clothing" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">View All</a></li>
                         <li><a class="dropdown-item" routerLink="/clothing/essentials" routerLinkActive="active" (click)="closeMenu()">Essentials</a></li>
                         <li><a class="dropdown-item" routerLink="/clothing/denim-tears" routerLinkActive="active" (click)="closeMenu()">Denim Tears</a></li>
                         <li><a class="dropdown-item" routerLink="/clothing/bape" routerLinkActive="active" (click)="closeMenu()">Bape</a></li>

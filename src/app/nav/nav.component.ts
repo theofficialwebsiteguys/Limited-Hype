@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { HeroComponent } from '../hero/hero.component';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { Product } from '../models/product';
   standalone: true,
   imports: [HeroComponent, CommonModule, RouterModule],
   templateUrl: './nav.component.html',
-  styleUrl: './nav.component.scss'
+  styleUrls: ['./nav.component.scss']
 })
 export class NavComponent implements OnInit {
 
@@ -21,7 +21,11 @@ export class NavComponent implements OnInit {
   allProducts: Product[] = [];
   searchResults: Product[] = [];
 
-  constructor(private router: Router, private productService: ProductService) {
+  constructor(
+    private router: Router, 
+    private productService: ProductService,
+    private renderer: Renderer2
+  ) {
     // Close the menu on route change
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -30,7 +34,7 @@ export class NavComponent implements OnInit {
     });
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.productService.getAllOrganizedProducts().subscribe(
       (products: Product[]) => {
         this.allProducts = products;
@@ -51,30 +55,23 @@ export class NavComponent implements OnInit {
     }
   }
 
-  closeDropdown(id: string) {
-    const dropdown = document.getElementById(id);
-    if (dropdown && dropdown.classList.contains('show')) {
-      dropdown.classList.remove('show');
-    }
-  }
-
   toggleSearchBar() {
     this.closeMenu();
     this.searchBarVisible = !this.searchBarVisible;
     const searchBarContainer = document.getElementById('searchBarContainer');
     if (searchBarContainer) {
-        searchBarContainer.style.display = this.searchBarVisible ? 'block' : 'none';
-        if (this.searchBarVisible) {
-          setTimeout(() => {
-            this.searchInput.nativeElement.focus();
-          }, 0);
-        }
+      searchBarContainer.style.display = this.searchBarVisible ? 'block' : 'none';
+      if (this.searchBarVisible) {
+        setTimeout(() => {
+          this.searchInput.nativeElement.focus();
+        }, 0);
+      }
     }
   }
 
   onSearch(event: any) {
     const query = event.target.value.toLowerCase();
-    this.searchResults = this.allProducts.filter(product => 
+    this.searchResults = this.allProducts.filter(product =>
       product.name.toLowerCase().includes(query)
     );
   }
@@ -83,7 +80,7 @@ export class NavComponent implements OnInit {
     this.searchBarVisible = false;
     const searchBarContainer = document.getElementById('searchBarContainer');
     if (searchBarContainer) {
-        searchBarContainer.style.display = 'none';
+      searchBarContainer.style.display = 'none';
     }
     this.router.navigate(['/item', product.id], { state: { product } });
   }
@@ -92,7 +89,38 @@ export class NavComponent implements OnInit {
     this.searchBarVisible = false;
     const searchBarContainer = document.getElementById('searchBarContainer');
     if (searchBarContainer) {
-        searchBarContainer.style.display = 'none';
+      searchBarContainer.style.display = 'none';
     }
+  }
+
+  handleDropdownClick(event: Event, dropdownId: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    const dropdownElement = document.getElementById(dropdownId);
+    if (dropdownElement) {
+      const isShown = dropdownElement.classList.contains('show');
+      this.closeAllDropdowns();
+      if (!isShown) {
+        this.renderer.addClass(dropdownElement, 'show');
+      }
+    }
+  }
+
+  closeAllDropdowns() {
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    dropdowns.forEach(dropdown => {
+      this.renderer.removeClass(dropdown, 'show');
+    });
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: Event) {
+    if (!this.isClickInsideElement(event, 'dropdown-toggle') && !this.isClickInsideElement(event, 'dropdown-menu')) {
+      this.closeAllDropdowns();
+    }
+  }
+
+  isClickInsideElement(event: Event, className: string): boolean {
+    return (event.target as HTMLElement).closest(`.${className}`) !== null;
   }
 }

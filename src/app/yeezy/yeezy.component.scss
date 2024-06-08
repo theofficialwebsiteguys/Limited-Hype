@@ -44,3 +44,11 @@
 .shoe-section{
   min-height: 200px;
 }
+
+/* Media query for smaller screens */
+@media (max-width: 576px) {
+  .col-sm-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}

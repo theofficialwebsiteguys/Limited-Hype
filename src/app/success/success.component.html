@@ -1,0 +1,27 @@
+<div class="thank-you-page mb-5" *ngIf="orderDetails; else loading">
+  <div class="thank-you-header">
+    <i class="fa-regular fa-circle-check check"></i>
+    <h1>THANK YOU FOR YOUR PURCHASE</h1>
+    <p>Order Number:<br> {{ orderDetails.id }}</p>
+    <p>We'll email you an order confirmation with details and tracking info</p>
+  </div>
+  
+  <!-- <div class="subscribe-section">
+    <p>Subscribe to receive important product updates and occasional discounts</p>
+    <input type="email" placeholder="customer@customer.com" [(ngModel)]="subscriptionEmail">
+    <button (click)="subscribe()">Subscribe</button>
+  </div> -->
+
+  <!-- <button class="continue-shopping-button mt-5" (click)="continueShopping()">Continue Shopping</button> -->
+  <button class="back-button m-auto mt-5" (click)="continueShopping()">
+    <i class="fas fa-arrow-right"></i> Continue Shopping
+  </button>
+</div>
+
+<ng-template #loading>
+  <p>Loading order details...</p>
+</ng-template>
+
+<div *ngIf="error">
+  <p>{{ error }}</p>
+</div>

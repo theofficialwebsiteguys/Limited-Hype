@@ -28,7 +28,7 @@ export class YeezyComponent {
     this.yeezyProducts$ = this.productService.getYeezyProducts().pipe(
       map(products => {
         const tag = this.route.snapshot.routeConfig?.path?.split('/')[1];
-        if (tag === 'yeezy-slide') {
+        if (tag === 'slide') {
           return products.filter(product => product.tag === 'Yeezy Slide');
         } else if (tag === 'foam-rnnr') {
           return products.filter(product => product.tag === 'Foam Rnnr');

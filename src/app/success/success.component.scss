@@ -1,0 +1,48 @@
+.thank-you-page {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  .thank-you-header {
+    margin-bottom: 30px;
+  }
+  
+  .checkmark-icon {
+    /* Add your checkmark icon styling here */
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+
+    background-size: cover;
+  }
+  
+  
+
+  
+  .subscribe-section {
+    margin-top: 30px;
+  }
+  
+  .subscribe-section input {
+    padding: 10px;
+    width: 200px;
+    margin-right: 10px;
+  }
+  
+  .subscribe-section button {
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .subscribe-section button:hover {
+    background-color: #313131;
+  }
+  
+  .check{
+    font-size: 40px;
+    color: #4CAF50;
+  }

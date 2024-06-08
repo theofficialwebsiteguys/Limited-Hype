@@ -4,6 +4,7 @@ import { Product } from '../models/product';
 import { ProductService } from '../product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-clothing',
@@ -15,7 +16,7 @@ import { Observable, map } from 'rxjs';
 export class ClothingComponent {
   clothingProducts$!: Observable<Product[]>;
 
-  constructor(private productService: ProductService, private router: Router, private route: ActivatedRoute){}
+  constructor(private productService: ProductService, private router: Router, private route: ActivatedRoute, private location: Location){}
 
 
   ngOnInit(){
@@ -58,5 +59,9 @@ export class ClothingComponent {
 
   viewProductDetail(product: any): void {
     this.router.navigate(['/item', product.id], { state: { product } });
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

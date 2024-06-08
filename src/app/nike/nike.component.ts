@@ -5,16 +5,22 @@ import { Product } from '../models/product';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-nike',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './nike.component.html',
   styleUrls: ['./nike.component.scss']
 })
 export class NikeComponent implements OnInit {
   nikeProducts$!: Observable<Product[]>;
+  filteredProducts$!: Observable<Product[]>;
+  sortOption: string = 'priceAsc';
+  minPrice: number = 0;
+  maxPrice: number = Infinity;
+  filteredProductsCount: number = 0;
 
   constructor(
     private productService: ProductService,
@@ -31,10 +37,47 @@ export class NikeComponent implements OnInit {
         } else if (brand === 'supreme') {
           return products.filter(product => product.brand === 'Supreme');
         } else {
-          return products;
+          return products.filter(product => product.brand !== 'Supreme');
         }
       })
     );
+
+    this.updateFilteredProducts();
+  }
+
+  onSortChange(event: any): void {
+    this.sortOption = event.target.value;
+    this.updateFilteredProducts();
+  }
+
+  updateFilteredProducts(): void {
+    this.filteredProducts$ = this.nikeProducts$.pipe(
+      map(products => this.filterProducts(products)),
+      map(products => this.sortProducts(products))
+    );
+
+    this.filteredProducts$.subscribe(products => this.filteredProductsCount = products.length);
+  }
+
+  filterProducts(products: Product[]): Product[] {
+    return products.filter(product => 
+      product.variant[0].price >= this.minPrice.toString() && product.variant[0].price <= this.maxPrice.toString()
+    );
+  }
+
+  sortProducts(products: Product[]): Product[] {
+    switch (this.sortOption) {
+      case 'priceAsc':
+        return products.sort((a:any, b:any) => a.variant[0].price - b.variant[0].price);
+      case 'priceDesc':
+        return products.sort((a:any, b:any) => b.variant[0].price - a.variant[0].price);
+      case 'nameAsc':
+        return products.sort((a, b) => a.name.localeCompare(b.name));
+      case 'nameDesc':
+        return products.sort((a, b) => b.name.localeCompare(a.name));
+      default:
+        return products;
+    }
   }
 
   viewProductDetail(product: any): void {

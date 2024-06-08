@@ -1,37 +1,26 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService {
 
-  // private apiUrl = 'https://api.shoplightspeed.com/en/external_services.json';
-
+  //private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com/';
   constructor(private http: HttpClient) {}
 
-  // createExternalService(service: any): Observable<any> {
-  //   const headers = new HttpHeaders({ 'Authorization': 'Basic ' + btoa('key:secret') });
-  //   return this.http.post<any>(this.apiUrl, service, { headers });
-  // }
-
-  // getPaymentMethods(endpoint: string): Observable<any> {
-  //   return this.http.post<any>(`${endpoint}/payment_methods`, {/* your payload */});
-  // }
-
-  // processPayment(endpoint: string, paymentDetails: any): Observable<any> {
-  //   return this.http.post<any>(`${endpoint}/payment`, paymentDetails);
-  // }
-
-  // getPaymentStatus(endpoint: string, orderId: string): Observable<any> {
-  //   return this.http.get<any>(`${endpoint}/payment/${orderId}`);
-  // }
-
-
-  createCheckoutSession(products: { name: string, price: number, quantity: number }[]): Observable<{ clientSecret: string }> {
-    console.log(products)
-    return this.http.post<{ clientSecret: string }>('https://limited-hype-server-fc852c1e4c1b.herokuapp.com/create-checkout-session', products);
+  createCheckoutSession(products: { lightspeedId: string, name: string, price: number, quantity: number }[]): Observable<{ clientSecret: string }> {
+    localStorage.setItem('soldProducts', JSON.stringify(products));
+    console.log(products);
+    return this.http.post<{ clientSecret: string }>(`${this.apiUrl}/create-checkout-session`, products);
   }
-  
+
+  getCheckoutSession(sessionId: string): Observable<any> {
+    const params = new HttpParams().set('session_id', sessionId);
+    const soldProducts = JSON.parse(localStorage.getItem('soldProducts') || '[]');
+    console.log(soldProducts);
+    return this.http.post(`${this.apiUrl}/api/checkout-session`, soldProducts, { params });
+  }
 }

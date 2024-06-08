@@ -52,16 +52,48 @@ app.post('/create-checkout-session', async (req, res) => {
       });
     }
 
-    console.log(line_items)
+     // Define shipping options
+     const shipping_options = [
+      {
+        shipping_rate_data: {
+          type: 'fixed_amount',
+          fixed_amount: { amount: 1500, currency: 'usd' }, // Shipping cost
+          display_name: 'Standard Shipping',
+          // Delivery estimate
+          delivery_estimate: {
+            minimum: { unit: 'business_day', value: 5 },
+            maximum: { unit: 'business_day', value: 7 },
+          },
+        },
+      },
+      {
+        shipping_rate_data: {
+          type: 'fixed_amount',
+          fixed_amount: { amount: 2500, currency: 'usd' }, // Shipping cost
+          display_name: 'Express Shipping',
+          // Delivery estimate
+          delivery_estimate: {
+            minimum: { unit: 'business_day', value: 1 },
+            maximum: { unit: 'business_day', value: 2 },
+          },
+        },
+      },
+    ];
+
+    
     // Create the checkout session
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
       line_items: line_items,
       mode: 'payment',
-      return_url: `https://theofficialwebsiteguys.github.io/Limited-Hype/return?session_id={CHECKOUT_SESSION_ID}`,
+      shipping_address_collection: {
+        allowed_countries: ['US'],
+      },
+      shipping_options: shipping_options,
+      //return_url: `https://theofficialwebsiteguys.github.io/Limited-Hype/success?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
     });
 
-    console.log(session)
 
     res.send({ clientSecret: session.client_secret });
   } catch (error) {
@@ -69,6 +101,51 @@ app.post('/create-checkout-session', async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+
+app.post('/api/checkout-session', async (req, res) => {
+  const sessionId = req.query.session_id;
+  const additionalData = req.body; // Handle any additional data sent in the body
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    
+    await registerSale(req.body);
+    
+    res.json(session);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Function to register the sale
+async function registerSale(items) {
+  const payload = {
+    register_id: "06e94082-ed4f-11ee-f619-eb7970ceac4d",
+    user_id: "0a4c4486-f925-11ee-fc19-eb79707a4d14",
+    status: "SAVED",
+    register_sale_products: items.map(item => ({
+      product_id: item.lightspeedId,
+      quantity: item.quantity,
+      price: item.price,
+      tax: item.price * 0.05500,
+      tax_id: '062791b7-dd73-11ee-eaf5-fc25466965b1'
+    }))
+  };
+
+  console.log(payload)
+
+  try {
+    // const response = await axios.post('https://limitedhypellp.retail.lightspeed.app/api/register_sales', payload, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': 'Bearer lsxs_pt_Onfr839n5jTDglw8JHanZbbx5Otk7qmL'
+    //   }
+    // });
+    console.log('Sale registered successfully:', response.data);
+  } catch (error) {
+    console.error('Error registering sale:', error);
+  }
+}
 
 app.get('/api/products', async (req, res) => {
   let allProducts = [];
@@ -79,7 +156,7 @@ app.get('/api/products', async (req, res) => {
     while (hasMorePages) {
       const response = await axios.get('https://limitedhypellp.retail.lightspeed.app/api/2.0/products', {
         headers: {
-          'Authorization': 'Bearer lsxs_at_KQGVErVSQZkq3464ieDKNwVMDehW6lVo'
+          'Authorization': 'Bearer lsxs_pt_Onfr839n5jTDglw8JHanZbbx5Otk7qmL'
         },
         params: {
           after: after
@@ -157,7 +234,7 @@ async function getInventory(productId) {
   // Fetch inventory from API
   const response = await axios.get(`https://limitedhypellp.retail.lightspeed.app/api/2.0/products/${productId}/inventory`, {
     headers: {
-      'Authorization': 'Bearer lsxs_at_KQGVErVSQZkq3464ieDKNwVMDehW6lVo' // Replace with dynamic token storage
+      'Authorization': 'Bearer lsxs_pt_Onfr839n5jTDglw8JHanZbbx5Otk7qmL' // Replace with dynamic token storage
     }
   });
 

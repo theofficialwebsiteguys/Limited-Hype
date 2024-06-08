@@ -5,7 +5,8 @@ const NodeCache = require('node-cache');
 const app = express();
 
 // Use CORS to allow requests from your Angular app
-app.use(cors({ origin: 'http://localhost:4200' }));
+//app.use(cors({ origin: 'http://localhost:4200' }));
+app.use(cors({ origin: 'https://theofficialwebsiteguys.github.io/Limited-Hype/' }));
 
 // Initialize cache
 const inventoryCache = new NodeCache({ stdTTL: 600, checkperiod: 120 });
@@ -13,7 +14,8 @@ const inventoryCache = new NodeCache({ stdTTL: 600, checkperiod: 120 });
 // Replace these with your Lightspeed app details
 const clientId = '66Yi7ku0rsjjhPUIQjkGVNSI169kfjm1';
 const clientSecret = 'tRS7jH5NqhMEj6x0SWBhDfRXfEMB0kJc';
-const redirectUri = 'http://localhost:3000/callback'; // Update with your actual Heroku URL
+//const redirectUri = 'http://localhost:3000/callback'; // Update with your actual Heroku URL
+const redirectUri = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com/callback'
 
 app.get('/home', (req, res) => {
   res.status(200).json('Welcome, your app is working well');

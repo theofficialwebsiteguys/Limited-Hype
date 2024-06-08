@@ -1,11 +1,40 @@
 <div class="container my-5" *ngIf="product">
   <div class="row">
+    <div class="col-12">
+      <button class="back-button" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-12 col-md-6">
-      <img [src]="product.imageUrl" class="img-fluid" alt="{{product.name}}">
+      <div *ngIf="product.imageUrl && product.imageBack; else singleImage">
+        <div id="carousel-{{product.id}}" class="carousel slide" data-bs-ride="carousel" (click)="$event.stopPropagation()">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img [src]="product.imageUrl" class="d-block w-100" alt="{{product.name}}">
+            </div>
+            <div class="carousel-item">
+              <img [src]="product.imageBack" class="d-block w-100" alt="{{product.name}}">
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel-' + product.id" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#carousel-' + product.id" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+      <ng-template #singleImage>
+        <img [src]="product.imageUrl" class="img-fluid" alt="{{product.name}}">
+      </ng-template>
     </div>
     <div class="col-12 col-md-6">
       <h2>{{product.name}}</h2>
-      <p>{{product.variant[0].price | currency}}</p>
+      <p>{{ getSelectedVariantPrice() ? (getSelectedVariantPrice() | currency) : 'Select size to see price'  }}</p>
       <div class="size-selection" *ngIf="sizes.length > 0">
         <span *ngFor="let size of sizes" 
               class="size" 
@@ -16,20 +45,25 @@
           {{ size }}
         </span>
       </div>
-      <p class="authenticity">100% Authentic</p>
+      <p class="authenticity">*AUTHENTICITY GUARANTEED*<br>
+        IN STOCK & READY TO SHIP<br>
+        NO RETURNS OR EXCHANGES
+        </p>
       <div class="product-actions">
         <button class="add-to-cart" 
-                (click)="addToCart()"
-                [disabled]="sizes.length > 0 && (!selectedSize || isInCart(getProductWithSize(selectedSize)))">
+                (click)="addToCart()">
           Add to cart
         </button>
+      </div>
+      <div *ngIf="errorMessage" class="error-message" style="color: red; margin-top: 10px;">
+        {{ errorMessage }}
       </div>
     </div>
   </div>
 </div>
 
 <div class="container mt-5">
-  <h2 class="my-5">Featured collection</h2>
+  <h2 class="my-5">Customers Also Bought</h2>
   <div class="shoe-section" *ngIf="featured$ | async as featured; else loadingFeatured">
     <div class="row justify-content-center">
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of featured">

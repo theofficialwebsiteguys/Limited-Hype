@@ -5,7 +5,7 @@ import { CartService } from '../cart.service';
 import { Observable, of, switchMap } from 'rxjs';
 import { Product } from '../models/product';
 import { ProductService } from '../product.service';
-import { ViewportScroller } from '@angular/common';
+import { ViewportScroller, Location } from '@angular/common';
 
 @Component({
   selector: 'app-item-display',
@@ -19,13 +19,15 @@ export class ItemDisplayComponent implements OnInit {
   selectedSize: string = '';
   product: Product | null | undefined = null;
   featured$!: Observable<Product[]>;
+  errorMessage: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private cartService: CartService,
     private productService: ProductService,
-    private viewportScroller: ViewportScroller
+    private viewportScroller: ViewportScroller,
+    private location: Location
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
@@ -36,7 +38,7 @@ export class ItemDisplayComponent implements OnInit {
 
   ngOnInit(): void {
     this.featured$ = this.productService.getFeaturedProducts();
-    
+
     // Subscribe to route parameter changes
     this.route.paramMap
       .pipe(
@@ -52,8 +54,6 @@ export class ItemDisplayComponent implements OnInit {
       .subscribe(product => {
         this.product = product;
         this.populateSizes();
-        console.log(product);
-        console.log(this.sizes);
       });
   }
 
@@ -65,6 +65,7 @@ export class ItemDisplayComponent implements OnInit {
           this.sizes.push(variant.size);
         }
       });
+      this.sizes.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
     }
   }
 
@@ -77,12 +78,17 @@ export class ItemDisplayComponent implements OnInit {
   selectSize(size: string): void {
     if (!this.isInCart({ ...this.product, size: size })) {
       this.selectedSize = size;
+      this.errorMessage = null; // Clear error message when size is selected
     }
   }
 
   addToCart(): void {
+    if (this.sizes.length > 0 && !this.selectedSize) {
+      this.errorMessage = 'Please select a size before adding to cart.';
+      return;
+    }
+
     const productToAdd = { ...this.product, size: this.sizes.length > 0 ? this.selectedSize : null };
-    console.log(productToAdd);
     this.cartService.addToCart(productToAdd);
     this.router.navigateByUrl('/cart');
   }
@@ -93,5 +99,17 @@ export class ItemDisplayComponent implements OnInit {
 
   getProductWithSize(size: string) {
     return { ...this.product, size: size };
+  }
+
+  getSelectedVariantPrice(): string | null {
+    if (this.product && this.product.variant) {
+      const selectedVariant = this.product.variant.find(variant => variant.size === this.selectedSize);
+      return selectedVariant ? selectedVariant.price : null;
+    }
+    return null;
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

@@ -62,12 +62,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     console.log(this.cart);
 
     this.cart.forEach((cartItem: any) => {
-      const variant = cartItem.variant.find((variant: any) => variant.size === cartItem.size);
+      const variant = cartItem.variant.find((variant: any) => variant.size === cartItem.size || !variant.size);
       console.log(variant);
+      const lightspeedId = variant.originalVariantProductId ? variant.originalVariantProductId : cartItem.originalId;
       const itemName = cartItem.name;
       const price = variant ? variant.price : cartItem.variant[0].price;
       const quantity = 1;
-      this.lineItems.push({ name: itemName, price: price * 100, quantity: quantity });
+      this.lineItems.push({ lightspeedId: lightspeedId, name: itemName, price: price * 100, quantity: quantity });
     });
 
     const fetchClientSecret = async () => {

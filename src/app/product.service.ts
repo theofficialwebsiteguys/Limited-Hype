@@ -32,11 +32,12 @@ export class ProductService {
   private fetchProductsFromServer(): void {
     this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders(), withCredentials: true }).pipe(
       map(data => {
+        console.log(data)
         const organizedProductsMap = new Map<string, Product>();
         const variants: any[] = [];
   
         data.forEach((product: any) => {
-            if (product.name.includes("GRAND OPENING")) {
+            if (product.name.includes("GRAND OPENING") || product.brand?.name === "Timberland") {
               return; 
             }
             const variantParentId = product.variant_parent_id;
@@ -50,10 +51,11 @@ export class ProductService {
                 organizedProductsMap.size,
                 product.name,
                 product.image_url,
+                product.images.length > 1 ? product.images[1].url : '',
                 product.brand?.name,
                 featured,
                 tag,
-                [{ size: product.variant_options[0]?.value, price: product.price_including_tax }]
+                [{originalVariantProductId: '', size: product.variant_options[0]?.value, price: product.price_including_tax }]
               );
               organizedProductsMap.set(product.id, newProduct);
             } else {
@@ -67,6 +69,7 @@ export class ProductService {
           const parentProduct = organizedProductsMap.get(variant.variant_parent_id);
           if (parentProduct) {
             parentProduct.variant.push({
+              originalVariantProductId: variant.id,
               size: variant.variant_options[0]?.value,
               price: variant.price_including_tax
             });
@@ -77,10 +80,11 @@ export class ProductService {
               organizedProductsMap.size,
               '', // Placeholder name
               '', // Placeholder image URL
+              '',
               '', // Placeholder brand
               false, // Placeholder featured flag
               '',
-              [{ size: variant.variant_options[0]?.value, price: variant.price_including_tax }]
+              [{originalVariantProductId: '', size: variant.variant_options[0]?.value, price: variant.price_including_tax }]
             );
             organizedProductsMap.set(variant.variant_parent_id, placeholderProduct);
           }

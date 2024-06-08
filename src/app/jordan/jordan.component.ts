@@ -28,7 +28,7 @@ export class JordanComponent {
 
     this.jordanProducts$ = this.productService.getJordanProducts().pipe(
       map(products => {
-        const tag = this.route.snapshot.routeConfig?.path?.split('/')[0];
+        const tag = this.route.snapshot.routeConfig?.path?.split('/')[1];
         if (tag === 'jordan-1-high') {
           return products.filter(product => product.tag === 'Jordan 1 High');
         } else if (tag === 'jordan-1-mid') {

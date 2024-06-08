@@ -5,10 +5,12 @@ export class Product {
       public id: number,
       public name: string,
       public imageUrl: string,
+      public imageBack: string,
       public brand: string,
       public featured: boolean,
       public tag: string,
       public variant: {
+        originalVariantProductId: string,
         size: string,
         price: string
       }[]
