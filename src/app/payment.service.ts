@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
 export class PaymentService {
 
   //private apiUrl = 'http://localhost:3000';
-  private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com/';
+  private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com';
   constructor(private http: HttpClient) {}
 
   createCheckoutSession(products: { lightspeedId: string, name: string, price: number, quantity: number }[]): Observable<{ clientSecret: string }> {

@@ -9,12 +9,20 @@ const app = express();
 app.use(bodyParser.json());
 
 // Middleware to handle CORS
+// app.use(cors({
+//   origin: 'http://localhost:4200', 
+//   credentials: true,
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   allowedHeaders: 'Content-Type,Authorization'
+// }));
+
 app.use(cors({
-  origin: 'http://localhost:4200', // Replace with your actual frontend URL
+  origin: 'https://theofficialwebsiteguys.github.io', // Replace with your actual frontend URL
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'Content-Type,Authorization'
 }));
+
 
 // Initialize cache
 const inventoryCache = new NodeCache({ stdTTL: 600, checkperiod: 120 });
@@ -90,8 +98,8 @@ app.post('/create-checkout-session', async (req, res) => {
         allowed_countries: ['US'],
       },
       shipping_options: shipping_options,
-      //return_url: `https://theofficialwebsiteguys.github.io/Limited-Hype/success?session_id={CHECKOUT_SESSION_ID}`,
-      return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `https://theofficialwebsiteguys.github.io/Limited-Hype/success?session_id={CHECKOUT_SESSION_ID}`,
+      //return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
     });
 
 
@@ -135,12 +143,12 @@ async function registerSale(items) {
   console.log(payload)
 
   try {
-    // const response = await axios.post('https://limitedhypellp.retail.lightspeed.app/api/register_sales', payload, {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': 'Bearer lsxs_pt_Onfr839n5jTDglw8JHanZbbx5Otk7qmL'
-    //   }
-    // });
+    const response = await axios.post('https://limitedhypellp.retail.lightspeed.app/api/register_sales', payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer lsxs_pt_Onfr839n5jTDglw8JHanZbbx5Otk7qmL'
+      }
+    });
     console.log('Sale registered successfully:', response.data);
   } catch (error) {
     console.error('Error registering sale:', error);
