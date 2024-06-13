@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, StripeElements, StripeAddressElement, StripeAddressElementOptions } from '@stripe/stripe-js';
 import { PaymentService } from '../payment.service';
 import { FormsModule } from '@angular/forms';
 
@@ -14,17 +14,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
   cart: any[] = [];
-  cartTotal = 0;
-
   stripe: any;
-  card: any;
-
-  lineItems: any[] = [];
-
-  checkout: any;
+  elements: StripeElements | undefined;
+  addressElement: StripeAddressElement | undefined;
+  checkoutSession: any;  // Add this line
 
   selectedCurrency = 'usd';
-  promotionCode: string = '';
+  address: any;
 
   @ViewChild('checkoutElement', { static: true }) checkoutElement!: ElementRef;
 
@@ -39,64 +35,65 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     console.log(this.cart);
     if (!this.cart.length) {
       this.router.navigate(['/cart']);
-    } else {
-      this.calculateTotal();
     }
 
-    console.log(this.cart);
-
     this.stripe = await loadStripe('pk_test_51POOsRAtSJLPfYWYi6NnxCtQ1hBBJwgdLm6Mh8ARbkWDsSvI0naQxwMYRRPKxoPKRel3Jx22ovNHywU2AagBD1sB00Ueys9YAE');
-    this.initialize();
+
+    const options: StripeAddressElementOptions = {
+      mode: 'shipping',
+      fields: {
+        phone: 'auto',
+      },
+    };
+
+    this.elements = this.stripe.elements();
+    this.addressElement = this.elements?.create('address', options);
+    this.addressElement?.mount('#address-element');
   }
 
   ngOnDestroy(): void {
-    if (this.checkout) {
-      this.checkout.destroy();
+    if (this.addressElement) {
+      this.addressElement.destroy();
+    }
+
+    // Destroy the checkout session if it exists
+    if (this.checkoutSession) {
+      this.checkoutSession.destroy();
     }
   }
 
-  calculateTotal() {
-    return this.cart.reduce((total, item) => {
-      const itemPrice = parseFloat(item.variant[0].price); // Remove any non-numeric characters
-      return total + itemPrice;
-    }, 0);
-  }
-
   async initialize() {
-    console.log(this.cart);
+    if (!this.elements || !this.addressElement) return;
 
-    this.lineItems = this.cart.map((cartItem: any) => {
+    // Destroy the existing embedded checkout session if it exists
+    if (this.checkoutSession) {
+      this.checkoutSession.destroy();
+    }
+
+    const { value: address } = await this.addressElement.getValue();
+    this.address = address;
+
+    const lineItems = this.cart.map((cartItem: any) => {
       const variant = cartItem.variant.find((variant: any) => variant.size === cartItem.size || !variant.size);
-      console.log(variant);
       const itemName = cartItem.name;
       const price = variant ? variant.price : cartItem.variant[0].price;
       const quantity = 1;
       return { name: itemName, price: price * 100, quantity: quantity };
     });
 
-    if (this.checkout) {
-      this.checkout.destroy();
+    const response = await this.paymentService.createCheckoutSession(lineItems, this.selectedCurrency, this.address).toPromise();
+    const clientSecret = response?.clientSecret;
+
+    if (this.stripe) {
+      // Create a new checkout session and store it
+      this.checkoutSession = await this.stripe.initEmbeddedCheckout({
+        clientSecret,
+      });
+      this.checkoutSession.mount('#checkout');
     }
-
-    const fetchClientSecret = async () => {
-      const response = await this.paymentService.createCheckoutSession(this.lineItems, this.selectedCurrency, this.promotionCode).toPromise();
-      return response!.clientSecret;
-    };
-
-    this.checkout = await this.stripe.initEmbeddedCheckout({
-      fetchClientSecret,
-    });
-
-    // Mount Checkout
-    this.checkout.mount('#checkout');
   }
 
   onCurrencyChange() {
     this.initialize();
   }
-
-  redirectToCheckout() {
-    this.initialize();
-  }
-  
 }

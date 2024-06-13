@@ -1,33 +1,95 @@
 .checkout-container {
-    text-align: center;
-    padding: 20px;
+  text-align: center;
+  padding: 20px;
+}
+
+.currency-selection {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.currency-selection label {
+  margin: 0 10px;
+}
+
+.currency-selection input[type="radio"] {
+  display: none;
+}
+
+.currency-selection .bubble {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 50px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.currency-selection input[type="radio"]:checked + .bubble {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.checkout-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.address-section,
+.payment-section {
+  flex: 1 1 300px;
+  padding: 20px;
+  box-sizing: border-box;
+  max-width: 600px;
+}
+
+.address-section {
+  border-right: 2px solid #ccc;
+}
+
+.payment-section.hidden {
+  display: none; /* Add a class to hide the payment section */
+}
+
+.payment-section {
+  display: block; /* Show when the class is removed */
+}
+
+.checkout-element {
+  text-align: left;
+}
+
+button {
+  display: block;
+  margin: 20px auto;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .checkout-content {
+    flex-direction: column;
+    align-items: center;
   }
-  
+
+  .address-section {
+    border-right: none;
+    border-bottom: 2px solid #ccc;
+  }
+
+  .payment-section {
+    width: 100%;
+    padding: 10px;
+  }
+
   .currency-selection {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    flex-direction: column;
   }
-  
+
   .currency-selection label {
-    margin: 0 10px;
+    margin-bottom: 10px;
   }
-  
-  .currency-selection input[type="radio"] {
-    display: none;
-  }
-  
-  .currency-selection .bubble {
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: 50px;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  
-  .currency-selection input[type="radio"]:checked + .bubble {
-    background-color: #007bff;
-    color: #fff;
-  }
-  
+}

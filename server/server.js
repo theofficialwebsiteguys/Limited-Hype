@@ -1,10 +1,12 @@
 const stripe = require('stripe')('sk_test_51POOsRAtSJLPfYWYzKygHZrTqLVLZT1qeygJwmtRtEOcGFSuXW2elncPen7s33Bj05TVdAORvClGb22qoJI8IRqm00oMB0K7LZ');
+var shippo = require('shippo')('shippo_test_f32790b86652b02e3e470dbd3e852e790c76ee79');
 const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const NodeCache = require('node-cache');
 const nodemailer = require('nodemailer');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -101,16 +103,52 @@ app.post('/send-email', (req, res) => {
   });
 });
 
-
 app.post('/create-checkout-session', async (req, res) => {
-  const items = req.body.products;
-  const currency = req.body.currency;
-  const promotionCode = req.body.promotionCode; // Get the promotion code from the request body
+  const { lineItems, currency, address } = req.body;
 
+  console.log(address)
+
+      // Define the sender's address
+    const addressFrom = {
+      name: "Limited Hype",
+      street1: "345 US-1",
+      city: "Kittery",
+      state: "ME",
+      zip: "03904",
+      country: "US"
+    };
+
+    const addressTo = {
+      name: address.name,
+      street1: address.address.line1,
+      street2: address.address.line2,
+      city: address.address.city,
+      state: address.address.state,
+      zip: address.address.postal_code,
+      country: address.address.country
+    };
+
+    // Aggregate parcel details based on items
+    const totalWeight = lineItems.reduce((sum, item) => sum + item.weight, 0);
+    const maxLength = Math.max(...lineItems.map(item => item.length));
+    const maxWidth = Math.max(...lineItems.map(item => item.width));
+    const maxHeight = Math.max(...lineItems.map(item => item.height));
+
+    const parcel = {
+      length: "24",
+      width: "12",
+      height: "8",
+      distance_unit: "in",
+      weight: 10,
+      mass_unit: "lb"
+    };
+
+
+    
   try {
     const line_items = [];
 
-    for (const item of items) {
+    for (const item of lineItems) {
       let convertedPrice = item.price;
 
       if (currency.toLowerCase() !== 'usd') {
@@ -137,49 +175,273 @@ app.post('/create-checkout-session', async (req, res) => {
       });
     }
 
+    // Fetch shipping rates from Shippo
+    const shippingRates = await getShippingRates(addressFrom, addressTo, [parcel]);
+
+     // Filter for UPS Ground and two fastest options
+     const upsGroundRate = shippingRates.find(rate => rate.provider === 'UPS' && rate.servicelevel.name.includes('Ground'));
+     const fastestRates = shippingRates
+       .filter(rate => rate.provider === 'UPS' && rate.servicelevel.name !== 'Ground')
+       .sort((a, b) => a.estimated_days - b.estimated_days)
+       .slice(0, 2);
+
+       console.log(upsGroundRate);
+       console.log(fastestRates);
+
+    // const shipping_options = [upsGroundRate, ...fastestRates].filter(Boolean).map(rate => ({
+    //   shipping_rate_data: {
+    //     type: 'fixed_amount',
+    //     fixed_amount: { amount: Math.round(rate.amount * 100), currency: currency },
+    //     display_name: rate.servicelevel.name,
+    //     delivery_estimate: {
+    //       minimum: { unit: 'day', value: rate.estimated_days },
+    //       maximum: { unit: 'day', value: rate.estimated_days },
+    //     },
+    //   },
+    // }));
+
     const shipping_options = [
-      {
-        shipping_rate_data: {
-          type: 'fixed_amount',
-          fixed_amount: { amount: 1500, currency: currency },
-          display_name: 'Standard Shipping',
-          delivery_estimate: {
-            minimum: { unit: 'business_day', value: 5 },
-            maximum: { unit: 'business_day', value: 7 },
-          },
-        },
-      },
-      {
-        shipping_rate_data: {
-          type: 'fixed_amount',
-          fixed_amount: { amount: 2500, currency: currency },
-          display_name: 'Express Shipping',
-          delivery_estimate: {
-            minimum: { unit: 'business_day', value: 1 },
-            maximum: { unit: 'business_day', value: 2 },
-          },
-        },
-      },
-    ];
+            {
+              shipping_rate_data: {
+                type: 'fixed_amount',
+                fixed_amount: { amount: Math.round(upsGroundRate.amount * 100), currency: currency }, // Shipping cost
+                display_name: upsGroundRate.servicelevel.display_name,
+                // Delivery estimate
+                delivery_estimate: {
+                  minimum: { unit: 'business_day', value: 1 },
+                  maximum: { unit: 'business_day', value: 5 },
+                },
+              },
+            },
+            {
+              shipping_rate_data: {
+                type: 'fixed_amount',
+                fixed_amount: { amount: Math.round(fastestRates[0].amount * 100), currency: currency }, // Shipping cost
+                display_name: fastestRates[0].servicelevel.display_name,
+                // Delivery estimate
+                delivery_estimate: {
+                  minimum: { unit: 'business_day', value: 1 },
+                  maximum: { unit: 'business_day', value: 2 },
+                },
+              },
+            },
+            {
+              shipping_rate_data: {
+                type: 'fixed_amount',
+                fixed_amount: { amount: Math.round(fastestRates[1].amount * 100), currency: currency }, // Shipping cost
+                display_name: fastestRates[1].servicelevel.display_name,
+                // Delivery estimate
+                delivery_estimate: {
+                  minimum: { unit: 'business_day', value: 1 },
+                  maximum: { unit: 'business_day', value: 2 },
+                },
+              },
+            },
+          ];
 
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded',
-      line_items: line_items,
-      mode: 'payment',
-      allow_promotion_codes: true,
-      shipping_address_collection: {
-        allowed_countries: ['US'],
+  const session = await stripe.checkout.sessions.create({
+    ui_mode: 'embedded',
+    payment_method_types: ['card'],
+    line_items: line_items,
+    mode: 'payment',
+    // shipping_address_collection: {
+    //   allowed_countries: ['US'],
+    // },
+    billing_address_collection: 'required',
+    shipping_options: shipping_options,
+    metadata: {
+      shipping_address: JSON.stringify(address), // Store the address as metadata if needed
+    },
+    payment_intent_data: {
+      shipping: {
+        name: addressTo.name,
+        address: {
+            line1: addressTo.street1,
+            line2: addressTo.street2,
+            city: addressTo.city,
+            state: addressTo.state,
+            postal_code: addressTo.zip,
+            country: addressTo.country,
+        }
       },
-      shipping_options: shipping_options,
-      return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
-    });
+    },
+    
+    return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
+  });
 
-    res.send({ clientSecret: session.client_secret });
+    console.log(session)
+
+  res.json({ clientSecret: session.client_secret });
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    console.error('Error creating checkout session:', error); // Log the error for debugging
     res.status(500).send({ error: error.message });
   }
 });
+
+
+// app.post('/create-checkout-session', async (req, res) => {
+//   const items = req.body.products;
+//   const currency = req.body.currency;
+//   const promotionCode = req.body.promotionCode; // Get the promotion code from the request body
+//   const shippingAddress = req.body.shippingAddress; // Get the shipping address from the request body
+
+//   // Define the sender's address
+//   const addressFrom = {
+//     name: "Limited Hype",
+//     street1: "345 US-1",
+//     city: "Kittery",
+//     state: "ME",
+//     zip: "03904",
+//     country: "US"
+//   };
+
+//   // Define the recipient's address based on the shipping address
+//   // const addressTo = {
+//   //   name: shippingAddress.name,
+//   //   street1: shippingAddress.street,
+//   //   city: shippingAddress.city,
+//   //   state: shippingAddress.state,
+//   //   zip: shippingAddress.zip,
+//   //   country: shippingAddress.country
+//   // };
+
+//   const addressTo = {
+//     name: "Jared Finn",
+//     street1: "600 Broadway",
+//     city: "Everett",
+//     state: "MA",
+//     zip: "02149",
+//     country: "US"
+//   };
+
+//   // Aggregate parcel details based on items
+//   const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+//   const maxLength = Math.max(...items.map(item => item.length));
+//   const maxWidth = Math.max(...items.map(item => item.width));
+//   const maxHeight = Math.max(...items.map(item => item.height));
+
+//   const parcel = {
+//     length: "24",
+//     width: "12",
+//     height: "8",
+//     distance_unit: "in",
+//     weight: 10,
+//     mass_unit: "lb"
+//   };
+
+
+//   try {
+//     const line_items = [];
+
+//     for (const item of items) {
+//       let convertedPrice = item.price;
+
+//       if (currency.toLowerCase() !== 'usd') {
+//         const exchangeRate = EXCHANGE_RATES[currency.toUpperCase()];
+//         if (!exchangeRate) {
+//           throw new Error(`Exchange rate for ${currency} not found`);
+//         }
+//         convertedPrice = item.price * exchangeRate;
+//       }
+
+//       const product = await stripe.products.create({
+//         name: item.name,
+//       });
+
+//       const price = await stripe.prices.create({
+//         unit_amount: convertedPrice,
+//         currency: currency,
+//         product: product.id,
+//       });
+
+//       line_items.push({
+//         price: price.id,
+//         quantity: item.quantity,
+//       });
+//     }
+
+//     // Fetch shipping rates from Shippo
+//     const shippingRates = await getShippingRates(addressFrom, addressTo, [parcel]);
+
+//      // Filter for UPS Ground and two fastest options
+//      const upsGroundRate = shippingRates.find(rate => rate.provider === 'UPS' && rate.servicelevel.name.includes('Ground'));
+//      const fastestRates = shippingRates
+//        .filter(rate => rate.provider === 'UPS' && rate.servicelevel.name !== 'Ground')
+//        .sort((a, b) => a.estimated_days - b.estimated_days)
+//        .slice(0, 2);
+
+//        console.log(upsGroundRate);
+//        console.log(fastestRates);
+
+//     // const shipping_options = [upsGroundRate, ...fastestRates].filter(Boolean).map(rate => ({
+//     //   shipping_rate_data: {
+//     //     type: 'fixed_amount',
+//     //     fixed_amount: { amount: Math.round(rate.amount * 100), currency: currency },
+//     //     display_name: rate.servicelevel.name,
+//     //     delivery_estimate: {
+//     //       minimum: { unit: 'day', value: rate.estimated_days },
+//     //       maximum: { unit: 'day', value: rate.estimated_days },
+//     //     },
+//     //   },
+//     // }));
+
+//     const shipping_options = [
+//             {
+//               shipping_rate_data: {
+//                 type: 'fixed_amount',
+//                 fixed_amount: { amount: upsGroundRate.amount * 100, currency: currency }, // Shipping cost
+//                 display_name: upsGroundRate.servicelevel.display_name,
+//                 // Delivery estimate
+//                 delivery_estimate: {
+//                   minimum: { unit: 'business_day', value: 1 },
+//                   maximum: { unit: 'business_day', value: 5 },
+//                 },
+//               },
+//             },
+//             {
+//               shipping_rate_data: {
+//                 type: 'fixed_amount',
+//                 fixed_amount: { amount: fastestRates[0].amount * 100, currency: currency }, // Shipping cost
+//                 display_name: fastestRates[0].servicelevel.display_name,
+//                 // Delivery estimate
+//                 delivery_estimate: {
+//                   minimum: { unit: 'business_day', value: 1 },
+//                   maximum: { unit: 'business_day', value: 2 },
+//                 },
+//               },
+//             },
+//             {
+//               shipping_rate_data: {
+//                 type: 'fixed_amount',
+//                 fixed_amount: { amount: fastestRates[1].amount * 100, currency: currency }, // Shipping cost
+//                 display_name: fastestRates[1].servicelevel.display_name,
+//                 // Delivery estimate
+//                 delivery_estimate: {
+//                   minimum: { unit: 'business_day', value: 1 },
+//                   maximum: { unit: 'business_day', value: 2 },
+//                 },
+//               },
+//             },
+//           ];
+
+//     const session = await stripe.checkout.sessions.create({
+//       ui_mode: 'embedded',
+//       line_items: line_items,
+//       mode: 'payment',
+//       allow_promotion_codes: true,
+//       shipping_address_collection: {
+//         allowed_countries: ['US'],
+//       },
+//       shipping_options: shipping_options,
+//       return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
+//     });
+
+//     res.send({ clientSecret: session.client_secret });
+//   } catch (error) {
+//     console.error('Error creating checkout session:', error);
+//     res.status(500).send({ error: error.message });
+//   }
+// });
 
 
 // app.post('/create-checkout-session', async (req, res) => {
@@ -276,6 +538,85 @@ app.post('/create-checkout-session', async (req, res) => {
 //     res.status(500).send({ error: error.message });
 //   }
 // });
+
+
+app.post('/get-shipping-rates', async (req, res) => {
+  const { shippingAddress, currency } = req.body;
+
+  const addressFrom = {
+    name: "Limited Hype",
+    street1: "345 US-1",
+    city: "Kittery",
+    state: "ME",
+    zip: "03904",
+    country: "US"
+  };
+
+  const addressTo = {
+    name: shippingAddress.name,
+    street1: shippingAddress.line1,
+    city: shippingAddress.city,
+    state: shippingAddress.state,
+    zip: shippingAddress.postal_code,
+    country: shippingAddress.country
+  };
+
+  const parcel = {
+    length: "12",
+    width: "6",
+    height: "4",
+    distance_unit: "in",
+    weight: 5,
+    mass_unit: "lb"
+  };
+
+  try {
+    const shippingRates = await getShippingRates(addressFrom, addressTo, [parcel]);
+
+    const upsGroundRate = shippingRates.find(rate => rate.provider === 'UPS' && rate.servicelevel.name.includes('Ground'));
+    const fastestRates = shippingRates
+      .filter(rate => rate.provider === 'UPS' && rate.servicelevel.name !== 'Ground')
+      .sort((a, b) => a.estimated_days - b.estimated_days)
+      .slice(0, 2);
+
+    const shippingOptions = [upsGroundRate, ...fastestRates].filter(Boolean).map(rate => ({
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        fixed_amount: { amount: Math.round(rate.amount * 100), currency: currency },
+        display_name: rate.servicelevel.name,
+        delivery_estimate: {
+          minimum: { unit: 'day', value: rate.estimated_days },
+          maximum: { unit: 'day', value: rate.estimated_days },
+        },
+      },
+    }));
+
+    res.send(shippingOptions);
+  } catch (error) {
+    console.error('Error fetching shipping rates:', error);
+    res.status(500).send({ error: error.message });
+  }
+});
+
+
+async function getShippingRates(addressFrom, addressTo, parcels) {
+  try {
+    const shipment = await shippo.shipment.create({
+      address_from: addressFrom,
+      address_to: addressTo,
+      parcels: parcels,
+      async: false
+    });
+
+    const rates = shipment.rates;
+    return rates;
+  } catch (error) {
+    console.error('Error fetching shipping rates:', error);
+    throw error;
+  }
+}
+
+
 
 app.post('/api/checkout-session', async (req, res) => {
   const sessionId = req.query.session_id;

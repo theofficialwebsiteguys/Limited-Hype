@@ -1,26 +1,29 @@
 <div class="checkout-container">
-  <h2>Select Currency</h2>
-  <div class="currency-selection">
-    <label>
-      <input type="radio" name="currency" value="usd" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
-      <span class="bubble">USD</span>
-    </label>
-    <label>
-      <input type="radio" name="currency" value="eur" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
-      <span class="bubble">EUR</span>
-    </label>
-    <label>
-      <input type="radio" name="currency" value="gbp" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
-      <span class="bubble">GBP</span>
-    </label>
+  <div class="checkout-content">
+    <div class="address-section">
+      <h2>Select Currency</h2>
+      <div class="currency-selection">
+        <label>
+          <input type="radio" name="currency" value="usd" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
+          <span class="bubble">USD</span>
+        </label>
+        <label>
+          <input type="radio" name="currency" value="eur" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
+          <span class="bubble">EUR</span>
+        </label>
+        <label>
+          <input type="radio" name="currency" value="gbp" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
+          <span class="bubble">GBP</span>
+        </label>
+      </div>
+      <div id="address-element" class="address-element"></div>
+      <button class="btn btn-primary" (click)="initialize()">Calculate Checkout</button>
+    </div>
+    <div class="payment-section">
+      <div id="checkout" class="">
+        <!-- Checkout will insert the payment form here -->
+      </div>
+    </div>
   </div>
 </div>
-
-<div id="checkout" class="m-5">
-  <!-- Checkout will insert the payment form here -->
-</div>
-
-<div>
-  <input type="text" [(ngModel)]="promotionCode" placeholder="Enter discount code" />
-</div>
-<button (click)="redirectToCheckout()">Checkout</button>
+  

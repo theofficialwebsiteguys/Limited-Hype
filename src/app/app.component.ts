@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { NavComponent } from './nav/nav.component';
@@ -8,7 +8,7 @@ import { HomeComponent } from './home/home.component';
 import { NikeComponent } from './nike/nike.component';
 import { JordanComponent } from './jordan/jordan.component';
 import { ProductService } from './product.service';
-import { Observable } from 'rxjs';
+import { Observable, filter } from 'rxjs';
 import { Product } from './models/product';
 import { AuthService } from './auth.service';
 import { SignupPopupComponent } from './signup-popup/signup-popup.component';
@@ -49,6 +49,12 @@ export class AppComponent {
       if (code && state) {
         this.authService.handleCallback(code, state);
       }
+    });
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      window.scrollTo(0, 0);
     });
   }
 
