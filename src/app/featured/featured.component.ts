@@ -38,6 +38,7 @@ export class FeaturedComponent implements OnInit {
     this.productService.getAllOrganizedProducts().subscribe(
       (products: Product[]) => {
         this.allProducts = products;
+        console.log(this.allProducts)
         this.displayMoreProducts();
         this.loadingAll = false;
       },

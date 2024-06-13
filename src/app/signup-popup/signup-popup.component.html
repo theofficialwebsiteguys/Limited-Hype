@@ -1,0 +1,18 @@
+<div class="signup-popup" *ngIf="showPopup">
+    <div class="popup-content">
+      <div class="logo-container">
+        <img src="assets/limited-hype-logo.png" id="logo" height="100" alt="Logo Description" />
+      </div>
+      <br>
+      <h2><span class="percent">Exclusive Deals</span><br> Sign up with your email below.</h2>
+      <form (ngSubmit)="onSubmit()">
+        <div class="input-container">
+            <i class="email-icon fa-solid fa-envelope"></i>
+          <input type="email" [(ngModel)]="email" name="email" required placeholder="Enter your email address">
+        </div>
+        <button type="submit" class="btn get-started">Let's Go</button>
+      </form>
+      <button (click)="closePopup()" class="btn not-right-now">NOT RIGHT NOW</button>
+    </div>
+  </div>
+  

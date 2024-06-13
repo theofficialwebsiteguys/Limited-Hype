@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 export class NikeComponent implements OnInit {
   nikeProducts$!: Observable<Product[]>;
   filteredProducts$!: Observable<Product[]>;
-  sortOption: string = 'priceAsc';
+  sortOption: string = '';
   minPrice: number = 0;
   maxPrice: number = Infinity;
   filteredProductsCount: number = 0;
@@ -34,10 +34,16 @@ export class NikeComponent implements OnInit {
         const brand = this.route.snapshot.routeConfig?.path?.split('/')[1];
         if (brand === 'sb') {
           return products.filter(product => product.brand === 'Nike SB');
-        } else if (brand === 'supreme') {
-          return products.filter(product => product.brand === 'Supreme');
-        } else {
-          return products.filter(product => product.brand !== 'Supreme');
+        } else if (brand === 'dunk') {
+          return products.filter(product => product.brand === 'Nike Dunk');
+        } else if (brand === 'air-max') {
+          return products.filter(product => product.brand === 'Air Max');
+        } else if (brand === 'air-force-1') {
+          return products.filter(product => product.brand === 'Air Force 1');
+        } else if (brand === 'kobe') {
+          return products.filter(product => product.brand === 'Kobe');
+        }else {
+          return products;
         }
       })
     );

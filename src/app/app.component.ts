@@ -11,11 +11,24 @@ import { ProductService } from './product.service';
 import { Observable } from 'rxjs';
 import { Product } from './models/product';
 import { AuthService } from './auth.service';
+import { SignupPopupComponent } from './signup-popup/signup-popup.component';
+import { SearchResultsComponent } from './search-results/search-results.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HttpClientModule, CommonModule, NavComponent, FooterComponent, HomeComponent, NikeComponent, JordanComponent, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, 
+    HttpClientModule,
+    CommonModule, 
+    NavComponent, 
+    FooterComponent, 
+    HomeComponent,
+    NikeComponent, 
+    JordanComponent, 
+    RouterLink, 
+    RouterLinkActive, 
+    SignupPopupComponent, 
+    SearchResultsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

@@ -34,4 +34,12 @@ export class CartComponent implements OnInit{
   checkout(): void {
     this.router.navigate(['/checkout'], { state: { cart: this.cart } });
   }
+
+  getSelectedVariantPrice(product: any): string | null {
+    if (product && product.variant) {
+      const selectedVariant = product.variant.find((variant: { size: any; }) => variant.size === product.size);
+      return selectedVariant ? selectedVariant.price : null;
+    }
+    return null;
+  }
 }

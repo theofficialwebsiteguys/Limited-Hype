@@ -3,13 +3,14 @@ import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/co
 import { Router } from '@angular/router';
 import { loadStripe } from '@stripe/stripe-js';
 import { PaymentService } from '../payment.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './checkout.component.html',
-  styleUrl: './checkout.component.scss'
+  styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
   cart: any[] = [];
@@ -18,9 +19,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   stripe: any;
   card: any;
 
-  lineItems: any[]= [];
+  lineItems: any[] = [];
 
   checkout: any;
+
+  selectedCurrency = 'usd';
+  promotionCode: string = '';
 
   @ViewChild('checkoutElement', { static: true }) checkoutElement!: ElementRef;
 
@@ -61,18 +65,21 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   async initialize() {
     console.log(this.cart);
 
-    this.cart.forEach((cartItem: any) => {
+    this.lineItems = this.cart.map((cartItem: any) => {
       const variant = cartItem.variant.find((variant: any) => variant.size === cartItem.size || !variant.size);
       console.log(variant);
-      const lightspeedId = variant.originalVariantProductId ? variant.originalVariantProductId : cartItem.originalId;
       const itemName = cartItem.name;
       const price = variant ? variant.price : cartItem.variant[0].price;
       const quantity = 1;
-      this.lineItems.push({ lightspeedId: lightspeedId, name: itemName, price: price * 100, quantity: quantity });
+      return { name: itemName, price: price * 100, quantity: quantity };
     });
 
+    if (this.checkout) {
+      this.checkout.destroy();
+    }
+
     const fetchClientSecret = async () => {
-      const response = await this.paymentService.createCheckoutSession(this.lineItems).toPromise();
+      const response = await this.paymentService.createCheckoutSession(this.lineItems, this.selectedCurrency, this.promotionCode).toPromise();
       return response!.clientSecret;
     };
 
@@ -83,4 +90,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     // Mount Checkout
     this.checkout.mount('#checkout');
   }
+
+  onCurrencyChange() {
+    this.initialize();
+  }
+
+  redirectToCheckout() {
+    this.initialize();
+  }
+  
 }

@@ -4,25 +4,39 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const NodeCache = require('node-cache');
+const nodemailer = require('nodemailer');
 const app = express();
 
 app.use(bodyParser.json());
 
-// Middleware to handle CORS
-// app.use(cors({
-//   origin: 'http://localhost:4200', 
-//   credentials: true,
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   allowedHeaders: 'Content-Type,Authorization'
-// }));
 
 app.use(cors({
-  origin: 'https://theofficialwebsiteguys.github.io', // Replace with your actual frontend URL
+  origin: 'http://localhost:4200', 
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'Content-Type,Authorization'
 }));
 
+// app.use(cors({
+//   origin: 'https://theofficialwebsiteguys.github.io', // Replace with your actual frontend URL
+//   credentials: true,
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   allowedHeaders: 'Content-Type,Authorization'
+// }));
+
+const EXCHANGE_RATES = {
+  EUR: 0.85,
+  GBP: 0.75
+};
+
+// Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // or your email provider
+  auth: {
+    user: 'theofficialwebsiteguys@gmail.com',
+    pass: 'tshz rgqz yyhn tiwg'
+  }
+});
 
 // Initialize cache
 const inventoryCache = new NodeCache({ stdTTL: 600, checkperiod: 120 });
@@ -33,41 +47,102 @@ app.get('/home', (req, res) => {
   res.status(200).json('Welcome, your app is working well');
 });
 
-app.post('/create-checkout-session', async (req, res) => {
-  const { items } = req.body;
+
+// Endpoint to handle signup and create a discount coupon
+app.post('/api/signup', async (req, res) => {
+  const { email } = req.body;
 
   try {
-    // Create an array to hold line item objects for Stripe
+    // Create a new customer in Stripe
+    const customer = await stripe.customers.create({
+      email: email,
+    });
+
+    // Create a 5% discount coupon
+    const coupon = await stripe.coupons.create({
+      percent_off: 5,
+      duration: 'once', // The coupon can be used only once
+    });
+
+    // Create a promotion code for the coupon
+    const promotionCode = await stripe.promotionCodes.create({
+      coupon: coupon.id,
+      max_redemptions: 1, // Ensure the coupon can be used only once
+    });
+
+    res.status(200).send({
+      message: 'Customer created and discount assigned',
+      customerId: customer.id,
+      promotionCode: promotionCode.code,
+    });
+  } catch (error) {
+    console.error('Error creating customer and coupon:', error);
+    res.status(500).send({ error: error.message });
+  }
+});
+
+
+
+app.post('/send-email', (req, res) => {
+  const { name, email, phone, comment } = req.body;
+  
+  const mailOptions = {
+    from: email,
+    to: 'jaredhfinn@gmail.com',
+    subject: `Contact form submission from ${name}`,
+    text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nComment: ${comment}`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return res.status(500).send(error.toString());
+    }
+    res.status(200).send('Email sent: ' + info.response);
+  });
+});
+
+
+app.post('/create-checkout-session', async (req, res) => {
+  const items = req.body.products;
+  const currency = req.body.currency;
+  const promotionCode = req.body.promotionCode; // Get the promotion code from the request body
+
+  try {
     const line_items = [];
 
-    for (const item of req.body) {
-      // Create a product
+    for (const item of items) {
+      let convertedPrice = item.price;
+
+      if (currency.toLowerCase() !== 'usd') {
+        const exchangeRate = EXCHANGE_RATES[currency.toUpperCase()];
+        if (!exchangeRate) {
+          throw new Error(`Exchange rate for ${currency} not found`);
+        }
+        convertedPrice = item.price * exchangeRate;
+      }
+
       const product = await stripe.products.create({
         name: item.name,
       });
 
-      // Create a price for the product
       const price = await stripe.prices.create({
-        unit_amount: item.price, // Price in cents
-        currency: 'usd',
+        unit_amount: convertedPrice,
+        currency: currency,
         product: product.id,
       });
 
-      // Add the line item for the session
       line_items.push({
         price: price.id,
         quantity: item.quantity,
       });
     }
 
-     // Define shipping options
-     const shipping_options = [
+    const shipping_options = [
       {
         shipping_rate_data: {
           type: 'fixed_amount',
-          fixed_amount: { amount: 1500, currency: 'usd' }, // Shipping cost
+          fixed_amount: { amount: 1500, currency: currency },
           display_name: 'Standard Shipping',
-          // Delivery estimate
           delivery_estimate: {
             minimum: { unit: 'business_day', value: 5 },
             maximum: { unit: 'business_day', value: 7 },
@@ -77,9 +152,8 @@ app.post('/create-checkout-session', async (req, res) => {
       {
         shipping_rate_data: {
           type: 'fixed_amount',
-          fixed_amount: { amount: 2500, currency: 'usd' }, // Shipping cost
+          fixed_amount: { amount: 2500, currency: currency },
           display_name: 'Express Shipping',
-          // Delivery estimate
           delivery_estimate: {
             minimum: { unit: 'business_day', value: 1 },
             maximum: { unit: 'business_day', value: 2 },
@@ -88,27 +162,120 @@ app.post('/create-checkout-session', async (req, res) => {
       },
     ];
 
-    
-    // Create the checkout session
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
       line_items: line_items,
       mode: 'payment',
+      allow_promotion_codes: true,
       shipping_address_collection: {
         allowed_countries: ['US'],
       },
       shipping_options: shipping_options,
-      return_url: `https://theofficialwebsiteguys.github.io/Limited-Hype/success?session_id={CHECKOUT_SESSION_ID}`,
-      //return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
     });
-
 
     res.send({ clientSecret: session.client_secret });
   } catch (error) {
-    console.error('Error creating checkout session:', error); // Log the error for debugging
+    console.error('Error creating checkout session:', error);
     res.status(500).send({ error: error.message });
   }
 });
+
+
+// app.post('/create-checkout-session', async (req, res) => {
+//   const items = req.body.products;
+//   const currency = req.body.currency;
+
+//   if (!['usd', 'eur', 'gbp'].includes(currency.toLowerCase())) {
+//     throw new Error('Unsupported currency');
+//   }
+
+//   try {
+//     // Create an array to hold line item objects for Stripe
+//     const line_items = [];
+
+//     for (const item of items) {
+
+//       let convertedPrice = item.price;
+
+//       if (currency.toLowerCase() !== 'usd') {
+//         const exchangeRate = EXCHANGE_RATES[currency.toUpperCase()];
+//         if (!exchangeRate) {
+//           throw new Error(`Exchange rate for ${currency} not found`);
+//         }
+//         convertedPrice = item.price * exchangeRate;
+//         //priceInCents = Math.round(convertedPrice * 100); // Convert back to cents
+//       }
+
+
+//       // Create a product
+//       const product = await stripe.products.create({
+//         name: item.name,
+//       });
+
+//       // Create a price for the product
+//       const price = await stripe.prices.create({
+//         unit_amount: convertedPrice, // Price in cents
+//         currency: currency,
+//         product: product.id,
+//       });
+
+//       // Add the line item for the session
+//       line_items.push({
+//         price: price.id,
+//         quantity: item.quantity,
+//       });
+//     }
+
+//      // Define shipping options
+//      const shipping_options = [
+//       {
+//         shipping_rate_data: {
+//           type: 'fixed_amount',
+//           fixed_amount: { amount: 1500, currency: currency }, // Shipping cost
+//           display_name: 'Standard Shipping',
+//           // Delivery estimate
+//           delivery_estimate: {
+//             minimum: { unit: 'business_day', value: 5 },
+//             maximum: { unit: 'business_day', value: 7 },
+//           },
+//         },
+//       },
+//       {
+//         shipping_rate_data: {
+//           type: 'fixed_amount',
+//           fixed_amount: { amount: 2500, currency: currency }, // Shipping cost
+//           display_name: 'Express Shipping',
+//           // Delivery estimate
+//           delivery_estimate: {
+//             minimum: { unit: 'business_day', value: 1 },
+//             maximum: { unit: 'business_day', value: 2 },
+//           },
+//         },
+//       },
+//     ];
+
+    
+//     // Create the checkout session
+//     const session = await stripe.checkout.sessions.create({
+//       ui_mode: 'embedded',
+//       line_items: line_items,
+//       mode: 'payment',
+//       shipping_address_collection: {
+//         allowed_countries: ['US'],
+//       },
+//       shipping_options: shipping_options,
+//       //return_url: `https://theofficialwebsiteguys.github.io/Limited-Hype/success?session_id={CHECKOUT_SESSION_ID}`,
+//       return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
+//     });
+
+
+//     res.send({ clientSecret: session.client_secret });
+//   } catch (error) {
+//     console.error('Error creating checkout session:', error); // Log the error for debugging
+//     res.status(500).send({ error: error.message });
+//   }
+// });
 
 app.post('/api/checkout-session', async (req, res) => {
   const sessionId = req.query.session_id;

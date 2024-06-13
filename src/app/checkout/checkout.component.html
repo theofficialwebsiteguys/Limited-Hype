@@ -1,89 +1,26 @@
-<!-- <div class="container mt-5">
-
-  <div class="row">
-    <div class="col-12 col-md-6">
-      <div class="card">
-        <h4>Contact</h4>
-        <input type="text" class="form-control mb-3" placeholder="Email or mobile phone number">
-        <div class="form-check mb-3">
-          <input class="form-check-input" type="checkbox" value="" id="subscribe">
-          <label class="form-check-label" for="subscribe">
-            Email me with news and offers
-          </label>
-        </div>
-  
-        <h4>Delivery</h4>
-        <select class="form-control mb-3">
-          <option selected>United States</option>
-          <option>Canada</option>
-
-        </select>
-        <input type="text" class="form-control mb-3" placeholder="First name (optional)">
-        <input type="text" class="form-control mb-3" placeholder="Last name">
-        <input type="text" class="form-control mb-3" placeholder="Address">
-        <input type="text" class="form-control mb-3" placeholder="Apartment, suite, etc. (optional)">
-        <input type="text" class="form-control mb-3" placeholder="City">
-        <select class="form-control mb-3">
-          <option selected>State</option>
-
-        </select>
-        <input type="text" class="form-control mb-3" placeholder="ZIP code">
-  
-        <h4>Payment</h4>
-        <div class="form-check mb-3">
-          <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" checked>
-          <label class="form-check-label" for="creditCard">
-            Credit card
-          </label>
-        </div>
-        <input type="text" class="form-control mb-3" placeholder="Card number">
-        <input type="text" class="form-control mb-3" placeholder="Expiration date (MM / YY)">
-        <input type="text" class="form-control mb-3" placeholder="Security code">
-        <input type="text" class="form-control mb-3" placeholder="Name on card">
-        <div class="form-check mb-3">
-          <input class="form-check-input" type="checkbox" value="" id="billingSameAsShipping" checked>
-          <label class="form-check-label" for="billingSameAsShipping">
-            Use shipping address as billing address
-          </label>
-        </div>
-  
-        <div class="form-check mb-3">
-          <input class="form-check-input" type="radio" name="paymentMethod" id="shopPay">
-          <label class="form-check-label" for="shopPay">
-            Shop Pay
-          </label>
-        </div>
-  
-        <div class="form-check mb-3">
-          <input class="form-check-input" type="radio" name="paymentMethod" id="googlePay">
-          <label class="form-check-label" for="googlePay">
-            Google Pay
-          </label>
-        </div>
-  
-        <button class="btn btn-primary btn-block">Pay now</button>
-      </div>
-    </div>
-    <div class="col-12 col-md-6">
-      <div class="card order-summary">
-        <h4>Order Summary</h4>
-        <div *ngFor="let item of cart" class="d-flex align-items-center mb-3">
-          <img [src]="item.imageUrl" [alt]="item.name" class="order-image mr-3">
-          <div>
-            <h5>{{item.name}}</h5>
-            <p>{{item.variant[0].price | currency}}</p>
-            <p>Size: {{item.size}}</p>
-          </div>
-        </div>
-        <h5>Subtotal: {{ cartTotal | currency }}</h5>
-        <p>Taxes and shipping calculated at checkout</p>
-      </div>
-    </div>
+<div class="checkout-container">
+  <h2>Select Currency</h2>
+  <div class="currency-selection">
+    <label>
+      <input type="radio" name="currency" value="usd" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
+      <span class="bubble">USD</span>
+    </label>
+    <label>
+      <input type="radio" name="currency" value="eur" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
+      <span class="bubble">EUR</span>
+    </label>
+    <label>
+      <input type="radio" name="currency" value="gbp" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
+      <span class="bubble">GBP</span>
+    </label>
   </div>
-</div> -->
+</div>
 
-
-<!-- Display a payment form -->
 <div id="checkout" class="m-5">
   <!-- Checkout will insert the payment form here -->
 </div>
+
+<div>
+  <input type="text" [(ngModel)]="promotionCode" placeholder="Enter discount code" />
+</div>
+<button (click)="redirectToCheckout()">Checkout</button>

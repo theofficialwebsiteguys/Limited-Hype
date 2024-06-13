@@ -1,3 +1,22 @@
+.sorting-controls {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.sort-select, .price-input {
+  max-width: 150px;
+  margin-right: 10px;
+}
+
+.sort-select {
+  min-width: 200px;
+}
+
+.sort-title{
+  margin-right: 10px;
+}
+
 .card {
   border: none;
   transition: transform 0.3s ease-in-out;

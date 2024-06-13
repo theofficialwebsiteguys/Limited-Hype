@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Renderer2 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Component, Renderer2, OnInit } from '@angular/core';
+import { NavigationEnd, Router, ActivatedRoute } from '@angular/router';
 import { filter } from 'rxjs';
 
 @Component({
@@ -10,13 +10,13 @@ import { filter } from 'rxjs';
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.scss'] // Ensure this is "styleUrls" (plural)
 })
-export class HeroComponent {
+export class HeroComponent implements OnInit {
   isHomePage: boolean = false;
   backgroundImage: string = '../../assets/hero.webp';
   heroHeight: string = '70vh';
   page_title: string = 'Limited Hype';
 
-  constructor(private router: Router, private renderer: Renderer2) {
+  constructor(private router: Router, private route: ActivatedRoute, private renderer: Renderer2) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.checkRoute(event.urlAfterRedirects);
@@ -42,7 +42,10 @@ export class HeroComponent {
       this.heroHeight = '70vh';
     } else {
       this.isHomePage = false;
-      switch (url) {
+      const queryParams = this.route.snapshot.queryParams;
+      const query = queryParams['query'];
+
+      switch (url.split('?')[0]) {
         case '/nike':
           this.backgroundImage = 'assets/nike-hero.jpg';
           this.page_title = 'All Nike';
@@ -65,7 +68,7 @@ export class HeroComponent {
           break;
         case '/jordan/jordan-1-low':
           this.backgroundImage = 'assets/jordan-hero.jpg';
-          this.page_title = 'Jordan 1 low';
+          this.page_title = 'Jordan 1 Low';
           this.heroHeight = '30vh';
           break;
         case '/jordan/jordan-3':
@@ -183,9 +186,39 @@ export class HeroComponent {
           this.page_title = 'Nike SB';
           this.heroHeight = '30vh';
           break;
-        case '/nike/supreme':
+        case '/nike/dunk':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Nike Dunk';
+          this.heroHeight = '30vh';
+          break;
+        case '/nike/air-max':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Air Max';
+          this.heroHeight = '30vh';
+          break;
+        case '/nike/air-force-1':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Air Force 1';
+          this.heroHeight = '30vh';
+          break;
+        case '/nike/kobe':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Kobe';
+          this.heroHeight = '30vh';
+          break;
+        case '/clothing/supreme':
           this.backgroundImage = 'assets/hero.webp';
           this.page_title = 'Supreme';
+          this.heroHeight = '30vh';
+          break;
+        case '/contact':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Contact';
+          this.heroHeight = '30vh';
+          break;
+        case '/search-results':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = query ? `Search Results for "${query}"` : 'Search Results';
           this.heroHeight = '30vh';
           break;
         // Add more cases as needed

@@ -5,16 +5,22 @@ import { ProductService } from '../product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-clothing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './clothing.component.html',
   styleUrl: './clothing.component.scss'
 })
 export class ClothingComponent {
   clothingProducts$!: Observable<Product[]>;
+  filteredProducts$!: Observable<Product[]>;
+  sortOption: string = '';
+  minPrice: number = 0;
+  maxPrice: number = Infinity;
+  filteredProductsCount: number = 0;
 
   constructor(private productService: ProductService, private router: Router, private route: ActivatedRoute, private location: Location){}
 
@@ -40,28 +46,52 @@ export class ClothingComponent {
           return products.filter(product => product.brand === 'Limited Hype');
         } else if (brand === 'kaws') {
           return products.filter(product => product.brand === 'Kaws');
+        } else if (brand === 'supreme') {
+          return products.filter(product => product.brand === 'Supreme');
         } else {
           return products;
         }
       })
     );
+    this.updateFilteredProducts();
+  }
 
-    // this.productService.getClothingProducts().subscribe(
-    //   (products: Product[]) => {
-    //     this.clothingProducts = products;
-    //     console.log(this.clothingProducts);
-    //   },
-    //   (error: any) => {
-    //     console.error('Error fetching Nike products', error);
-    //   }
-    // );
+  onSortChange(event: any): void {
+    this.sortOption = event.target.value;
+    this.updateFilteredProducts();
+  }
+
+  updateFilteredProducts(): void {
+    this.filteredProducts$ = this.clothingProducts$.pipe(
+      map(products => this.filterProducts(products)),
+      map(products => this.sortProducts(products))
+    );
+
+    this.filteredProducts$.subscribe(products => this.filteredProductsCount = products.length);
+  }
+
+  filterProducts(products: Product[]): Product[] {
+    return products.filter(product => 
+      product.variant[0].price >= this.minPrice.toString() && product.variant[0].price <= this.maxPrice.toString()
+    );
+  }
+
+  sortProducts(products: Product[]): Product[] {
+    switch (this.sortOption) {
+      case 'priceAsc':
+        return products.sort((a:any, b:any) => a.variant[0].price - b.variant[0].price);
+      case 'priceDesc':
+        return products.sort((a:any, b:any) => b.variant[0].price - a.variant[0].price);
+      case 'nameAsc':
+        return products.sort((a, b) => a.name.localeCompare(b.name));
+      case 'nameDesc':
+        return products.sort((a, b) => b.name.localeCompare(a.name));
+      default:
+        return products;
+    }
   }
 
   viewProductDetail(product: any): void {
     this.router.navigate(['/item', product.id], { state: { product } });
-  }
-
-  goBack(): void {
-    this.location.back();
   }
 }

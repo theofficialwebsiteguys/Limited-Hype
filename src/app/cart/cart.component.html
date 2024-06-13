@@ -24,7 +24,7 @@
                           1
                           <button class="btn btn-link" (click)="removeFromCart(item)">Remove</button>
                       </td>
-                      <td>{{item.variant[0]?.price | currency}}</td>
+                      <td>{{ (getSelectedVariantPrice(item) | currency)}}</td>
                   </tr>
               </tbody>
           </table>

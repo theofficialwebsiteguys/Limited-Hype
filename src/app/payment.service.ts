@@ -7,14 +7,14 @@ import { Observable, of } from 'rxjs';
 })
 export class PaymentService {
 
-  //private apiUrl = 'http://localhost:3000';
-  private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com';
+  private apiUrl = 'http://localhost:3000';
+  //private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com';
   constructor(private http: HttpClient) {}
 
-  createCheckoutSession(products: { lightspeedId: string, name: string, price: number, quantity: number }[]): Observable<{ clientSecret: string }> {
+  createCheckoutSession(products: { lightspeedId: string, name: string, price: number, quantity: number }[], currency: string, promotionCode: string): Observable<{ clientSecret: string }> {
     localStorage.setItem('soldProducts', JSON.stringify(products));
     console.log(products);
-    return this.http.post<{ clientSecret: string }>(`${this.apiUrl}/create-checkout-session`, products);
+    return this.http.post<{ clientSecret: string }>(`${this.apiUrl}/create-checkout-session`, { products, currency, promotionCode });
   }
 
   getCheckoutSession(sessionId: string): Observable<any> {

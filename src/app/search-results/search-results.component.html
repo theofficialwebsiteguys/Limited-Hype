@@ -1,5 +1,4 @@
 <div class="container mt-5">
-
     <div class="sorting-controls mb-4 d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center">
         <label class="sort-title" for="sort">Sort by: </label>
@@ -13,8 +12,7 @@
         <span class="ml-3">{{filteredProductsCount}} products</span>
       </div>
     </div>
-
-    <!-- <h2 class="my-5">Yeezy</h2> -->
+  
     <div class="shoe-section" *ngIf="filteredProducts$ | async as filteredProducts; else loading">
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of filteredProducts">
@@ -34,5 +32,6 @@
       <div class="text-center m-5 p-5">
         <img src="assets/spinning-shoe.gif" alt="Loading..." class="loading-gif">
       </div>
-  </ng-template>
-</div>
+    </ng-template>
+  </div>
+  

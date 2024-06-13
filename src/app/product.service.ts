@@ -9,8 +9,8 @@ import { Product } from './models/product';
 })
 export class ProductService {
 
-  private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com/api/products'; // URL of your Node.js server
-  //private apiUrl = 'http://localhost:3000/api/products';
+  //private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com/api/products'; // URL of your Node.js server
+  private apiUrl = 'http://localhost:3000/api/products';
   private organizedProductsSubject = new BehaviorSubject<Product[]>(this.loadProducts());
   organizedProducts$ = this.organizedProductsSubject.asObservable();
 
@@ -32,36 +32,52 @@ export class ProductService {
   private fetchProductsFromServer(): void {
     this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders(), withCredentials: true }).pipe(
       map(data => {
-        console.log(data)
+        console.log(data);
         const organizedProductsMap = new Map<string, Product>();
         const variants: any[] = [];
+        let productIdCounter = 0;
   
         data.forEach((product: any) => {
-            if (product.name.includes("GRAND OPENING") || product.brand?.name === "Timberland") {
-              return; 
-            }
-            const variantParentId = product.variant_parent_id;
-            const featured = product.categories[0]?.name === 'featured';
-            const tag = featured ? product.categories[1]?.name : product.categories[0]?.name;
-            
-            if (!variantParentId) {
-              // It's a parent product
-              const newProduct = new Product(
-                product.id,
-                organizedProductsMap.size,
-                product.name,
-                product.image_url,
-                product.images.length > 1 ? product.images[1].url : '',
-                product.brand?.name,
-                featured,
-                tag,
-                [{originalVariantProductId: '', size: product.variant_options[0]?.value, price: product.price_including_tax }]
+          if (product.name.includes("GRAND OPENING") || product.brand?.name === "Timberland") {
+            return;
+          }
+          const variantParentId = product.variant_parent_id;
+          const featured = product.categories[0]?.name === 'featured';
+          const tag = featured ? product.categories[1]?.name : product.categories[0]?.name;
+  
+          if (!variantParentId) {
+            // It's a parent product
+            const newProduct = new Product(
+              product.id,
+              productIdCounter++,
+              product.name,
+              product.image_url,
+              product.images.length > 1 ? product.images[1].url : '',
+              product.brand?.name,
+              featured,
+              tag,
+              [{ originalVariantProductId: '', size: product.variant_options[0]?.value, price: product.price_including_tax }]
+            );
+            organizedProductsMap.set(product.id, newProduct);
+          } else {
+            // It's a variant
+            variants.push(product);
+            // Ensure a placeholder for parent if not already present
+            if (!organizedProductsMap.has(variantParentId)) {
+              const placeholderProduct = new Product(
+                variantParentId,
+                productIdCounter++,
+                '', // Placeholder name
+                '', // Placeholder image URL
+                '',
+                '', // Placeholder brand
+                false, // Placeholder featured flag
+                '',
+                []
               );
-              organizedProductsMap.set(product.id, newProduct);
-            } else {
-              // It's a variant
-              variants.push(product);
+              organizedProductsMap.set(variantParentId, placeholderProduct);
             }
+          }
         });
   
         // Process variants and associate them with their parent products
@@ -73,20 +89,13 @@ export class ProductService {
               size: variant.variant_options[0]?.value,
               price: variant.price_including_tax
             });
-          } else {
-            // Handle the case where the parent product is still not in the map
-            const placeholderProduct = new Product(
-              variant.variant_parent_id,
-              organizedProductsMap.size,
-              '', // Placeholder name
-              '', // Placeholder image URL
-              '',
-              '', // Placeholder brand
-              false, // Placeholder featured flag
-              '',
-              [{originalVariantProductId: '', size: variant.variant_options[0]?.value, price: variant.price_including_tax }]
-            );
-            organizedProductsMap.set(variant.variant_parent_id, placeholderProduct);
+  
+            // If the placeholder parent has empty details, fill them with the first variant's details
+            if (!parentProduct.name && !parentProduct.imageUrl && !parentProduct.brand) {
+              parentProduct.name = variant.name;
+              parentProduct.imageUrl = variant.skuImages[0]?.url ? variant.skuImages[0].url : variant.image_url;
+              parentProduct.brand = variant.brand?.name;
+            }
           }
         });
   
@@ -104,6 +113,7 @@ export class ProductService {
         });
   
         const organizedProducts = Array.from(organizedProductsMap.values());
+        organizedProducts.sort((a, b) => a.name.localeCompare(b.name));
         this.saveProducts(organizedProducts);
         console.log(organizedProducts);
         return organizedProducts;
@@ -112,19 +122,21 @@ export class ProductService {
     ).subscribe();
   }
   
+  
   getProductInventory(id: string): Observable<any> {
     return this.http.get<any>(this.apiUrl + `/${id}/inventory`, { headers: this.getHeaders(), withCredentials: true });
   }
 
   getAllOrganizedProducts(): Observable<Product[]> {
-    return this.organizedProducts$.pipe(
-      map(products => products.filter(product => !product.imageUrl.endsWith('no-image-white-standard.png')))
-    );
+    return this.organizedProducts$;
+    // return this.organizedProducts$.pipe(
+    //   map(products => products.filter(product => !product.imageUrl.endsWith('no-image-white-standard.png')))
+    // );
   }
 
   getNikeProducts(): Observable<Product[]> {
     return this.organizedProducts$.pipe(
-      map(products => products.filter(product => product.brand === 'Nike' || product.brand === 'Nike SB'|| product.brand === 'Supreme'))
+      map(products => products.filter(product => product.brand === 'Nike' || product.brand === 'Nike SB'|| product.brand === 'Nike Dunk'|| product.brand === 'Nike Air Max'))
     );
   }
 
@@ -142,7 +154,7 @@ export class ProductService {
 
   getClothingProducts(): Observable<Product[]> {
     return this.organizedProducts$.pipe(
-      map(products => products.filter(product => ['Denim Tears', 'Essentials', 'Bape', 'Limited Hype', 'Pharaoh Collections', 'Hellstar', 'Eric Emanuel', 'Kaws'].includes(product.brand)))
+      map(products => products.filter(product => ['Denim Tears', 'Essentials', 'Bape', 'Limited Hype', 'Pharaoh Collections', 'Hellstar', 'Eric Emanuel', 'Kaws', 'Supreme'].includes(product.brand)))
     );
   }
 

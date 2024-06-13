@@ -21,3 +21,30 @@
   .text-center.text-dark.p-3 a:hover {
     color: dark;
   }
+
+  .custom-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5em 1em;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 1em;
+    color: black;
+    transition: background-color 0.3s;
+    margin: auto;
+    margin-bottom: 20px;
+    width: 200px;
+  }
+  
+  .custom-button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .arrow {
+    margin-left: 1em;
+    font-size: 1.2em;
+  }
+  
