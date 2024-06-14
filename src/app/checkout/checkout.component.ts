@@ -29,10 +29,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     if (navigation?.extras.state) {
       this.cart = navigation.extras.state['cart'];
     }
+
   }
 
   async ngOnInit(): Promise<void> {
-    console.log(this.cart);
     if (!this.cart.length) {
       this.router.navigate(['/cart']);
     }
@@ -77,8 +77,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       const variant = cartItem.variant.find((variant: any) => variant.size === cartItem.size || !variant.size);
       const itemName = cartItem.name;
       const price = variant ? variant.price : cartItem.variant[0].price;
-      const quantity = 1;
-      return { name: itemName, price: price * 100, quantity: quantity };
+      const quantity = cartItem.quantity;
+      const category = cartItem.category;
+      const product_id = variant.originalVariantProductId || cartItem.originalId;
+      // const product_id = cartItem;
+      return { name: itemName, price: (price * 100), quantity: quantity, category: category, product_id: product_id  };
     });
 
     const response = await this.paymentService.createCheckoutSession(lineItems, this.selectedCurrency, this.address).toPromise();

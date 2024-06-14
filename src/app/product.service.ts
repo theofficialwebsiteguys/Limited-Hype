@@ -56,6 +56,7 @@ export class ProductService {
               product.brand?.name,
               featured,
               tag,
+              product.product_category?.name,
               [{ originalVariantProductId: '', size: product.variant_options[0]?.value, price: product.price_including_tax }]
             );
             organizedProductsMap.set(product.id, newProduct);
@@ -72,6 +73,7 @@ export class ProductService {
                 '',
                 '', // Placeholder brand
                 false, // Placeholder featured flag
+                '',
                 '',
                 []
               );
@@ -95,6 +97,7 @@ export class ProductService {
               parentProduct.name = variant.name;
               parentProduct.imageUrl = variant.skuImages[0]?.url ? variant.skuImages[0].url : variant.image_url;
               parentProduct.brand = variant.brand?.name;
+              parentProduct.category = variant.product_category?.name;
             }
           }
         });
@@ -108,6 +111,7 @@ export class ProductService {
               parentProduct.imageUrl = product.image_url;
               parentProduct.brand = product.brand?.name;
               parentProduct.featured = product.categories[0]?.name === 'featured';
+              parentProduct.category = product.product_category?.name;
             }
           }
         });

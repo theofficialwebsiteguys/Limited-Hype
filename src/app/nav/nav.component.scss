@@ -27,7 +27,7 @@
   background-color: white;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
   transition: right 0.3s;
-  z-index: 1040;
+  z-index: 9999;
 }
 
 .slide-in-menu.active {
@@ -36,6 +36,7 @@
 
 .slide-in-menu-content {
   padding: 20px;
+  padding-top: 60px;
   max-height: 100%;
   overflow-y: auto; /* Ensure the entire slide-in menu can scroll if content exceeds the height */
 }
@@ -50,7 +51,7 @@
   right: 20px;
   background: none;
   border: none;
-  font-size: 30px;
+  font-size: 40px;
   cursor: pointer;
 }
 

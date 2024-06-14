@@ -43,6 +43,12 @@ const transporter = nodemailer.createTransport({
 // Initialize cache
 const inventoryCache = new NodeCache({ stdTTL: 600, checkperiod: 120 });
 
+// Function to clear the node-cache
+const clearCache = () => {
+  inventoryCache.flushAll();
+  console.log('Cache cleared on server');
+};
+
 // Your existing routes here
 
 app.get('/home', (req, res) => {
@@ -134,12 +140,12 @@ app.post('/create-checkout-session', async (req, res) => {
     const maxWidth = Math.max(...lineItems.map(item => item.width));
     const maxHeight = Math.max(...lineItems.map(item => item.height));
 
-    const parcel = {
-      length: "24",
-      width: "12",
-      height: "8",
+    var parcel = {
+      length: 0,
+      width: 0,
+      height: 0,
       distance_unit: "in",
-      weight: 10,
+      weight: 0,
       mass_unit: "lb"
     };
 
@@ -147,8 +153,46 @@ app.post('/create-checkout-session', async (req, res) => {
     
   try {
     const line_items = [];
+    const taxRateId = 'txr_1PRiu0AtSJLPfYWYtoTbQLGC';
+
+    console.log(lineItems)
 
     for (const item of lineItems) {
+
+      if(item.category == 'New Shoes' || item.category == 'Used Shoes'){
+        parcel.length = parcel.length + 14;
+        parcel.width = parcel.width + 10;
+        parcel.height = parcel.height + 6 * item.quantity;
+        parcel.weight = parcel.weight + 4 * item.quantity;
+      }else if(item.category == 'Shorts'){
+        parcel.length = parcel.length + 10;
+        parcel.width = parcel.width + 7;
+        parcel.height = parcel.height + 2 * item.quantity;
+        parcel.weight = parcel.weight + .25 * item.quantity;
+      }else if(item.category == 'Hoodies'){
+        parcel.length = parcel.length + 14;
+        parcel.width = parcel.width + 10;
+        parcel.height = parcel.height + 4 * item.quantity;
+        parcel.weight = parcel.weight + 2 * item.quantity;
+      }else if(item.category == 'T-Shirts'){
+        parcel.length = parcel.length + 10;
+        parcel.width = parcel.width + 7;
+        parcel.height = parcel.height + 2 * item.quantity;
+        parcel.weight = parcel.weight + .75 * item.quantity;
+      }else if(item.category == 'Hats'){
+        parcel.length = parcel.length + 10;
+        parcel.width = parcel.width + 8;
+        parcel.height = parcel.height + 6 * item.quantity;
+        parcel.weight = parcel.weight + .5 * item.quantity;
+      }else{
+        parcel.length = parcel.length + 14;
+        parcel.width = parcel.width + 10;
+        parcel.height = parcel.height + 6 * item.quantity;
+        parcel.weight = parcel.weight + 4 * item.quantity;
+      }
+
+      console.log(parcel)
+
       let convertedPrice = item.price;
 
       if (currency.toLowerCase() !== 'usd') {
@@ -172,6 +216,7 @@ app.post('/create-checkout-session', async (req, res) => {
       line_items.push({
         price: price.id,
         quantity: item.quantity,
+        tax_rates: [taxRateId],
       });
     }
 
@@ -185,8 +230,8 @@ app.post('/create-checkout-session', async (req, res) => {
        .sort((a, b) => a.estimated_days - b.estimated_days)
        .slice(0, 2);
 
-       console.log(upsGroundRate);
-       console.log(fastestRates);
+       //console.log(upsGroundRate);
+       //console.log(fastestRates);
 
     // const shipping_options = [upsGroundRate, ...fastestRates].filter(Boolean).map(rate => ({
     //   shipping_rate_data: {
@@ -249,8 +294,10 @@ app.post('/create-checkout-session', async (req, res) => {
     // },
     billing_address_collection: 'required',
     shipping_options: shipping_options,
-    metadata: {
-      shipping_address: JSON.stringify(address), // Store the address as metadata if needed
+    custom_text: {
+      submit: {
+        message: 'Prices include 5.5% tax', // Display a note indicating the tax is included
+      },
     },
     payment_intent_data: {
       shipping: {
@@ -269,7 +316,7 @@ app.post('/create-checkout-session', async (req, res) => {
     return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
   });
 
-    console.log(session)
+    //console.log(session)
 
   res.json({ clientSecret: session.client_secret });
   } catch (error) {
@@ -625,7 +672,9 @@ app.post('/api/checkout-session', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     
-    await registerSale(req.body);
+    await registerSale(additionalData);
+
+    clearCache();
     
     res.json(session);
   } catch (error) {
@@ -640,16 +689,14 @@ async function registerSale(items) {
     user_id: "0a4c4486-f925-11ee-fc19-eb79707a4d14",
     status: "SAVED",
     register_sale_products: items.map(item => ({
-      product_id: item.lightspeedId,
+      product_id: item.product_id,
       quantity: item.quantity,
-      price: item.price,
-      tax: item.price * 0.05500,
+      price: (item.price * item.quantity)/100,
+      tax: ((item.price * item.quantity)/100) * 0.05500,
       tax_id: '062791b7-dd73-11ee-eaf5-fc25466965b1'
     }))
   };
-
-  console.log(payload)
-
+  
   try {
     const response = await axios.post('https://limitedhypellp.retail.lightspeed.app/api/register_sales', payload, {
       headers: {
@@ -697,9 +744,12 @@ app.get('/api/products', async (req, res) => {
     );
     const inventories = await Promise.all(inventoryRequests);
 
+
     // Filter products based on inventory
-    const productsWithInventory = allProducts.filter((product, index) =>
-      inventories[index].data.some(item => item.current_amount > 0)
+    const productsWithInventory = allProducts.filter((product, index) => {
+      return inventories[index].data.some(item => item.current_amount > 0);
+    }
+
     );
 
     res.json(productsWithInventory);
@@ -753,6 +803,7 @@ async function getInventory(productId) {
       'Authorization': 'Bearer lsxs_pt_Onfr839n5jTDglw8JHanZbbx5Otk7qmL' // Replace with dynamic token storage
     }
   });
+
 
   // Cache the inventory response
   inventoryCache.set(productId, response.data);

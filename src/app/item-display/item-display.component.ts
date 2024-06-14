@@ -6,11 +6,12 @@ import { Observable, of, switchMap } from 'rxjs';
 import { Product } from '../models/product';
 import { ProductService } from '../product.service';
 import { ViewportScroller, Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-item-display',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './item-display.component.html',
   styleUrls: ['./item-display.component.scss']
 })
@@ -20,6 +21,10 @@ export class ItemDisplayComponent implements OnInit {
   product: Product | null | undefined = null;
   featured$!: Observable<Product[]>;
   errorMessage: string | null = null;
+
+  quantities: number[] = [];
+  currentQuantity: number = 1;
+  selectedQuantity: number = 1;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,6 +60,17 @@ export class ItemDisplayComponent implements OnInit {
         this.product = product;
         this.populateSizes();
       });
+
+      const id = this.product?.variant.find(variant => variant.size === this.selectedSize)?.originalVariantProductId || this.product?.originalId;
+      if (this.product && id) {
+        this.productService.getProductInventory(id).subscribe(data => {
+          const inventoryLevel = data.data[0].inventory_level;
+          const quantityInCart = this.cartService.getQuantityInCart({ ...this.product });
+          this.currentQuantity = inventoryLevel - quantityInCart;
+          this.generateQuantities();
+        });
+      }
+
   }
 
   populateSizes(): void {
@@ -76,10 +92,18 @@ export class ItemDisplayComponent implements OnInit {
   }
 
   selectSize(size: string): void {
-    if (!this.isInCart({ ...this.product, size: size })) {
-      this.selectedSize = size;
-      this.errorMessage = null; // Clear error message when size is selected
+    this.selectedSize = size;
+
+    const id = this.product?.variant.find(variant => variant.size === this.selectedSize)?.originalVariantProductId || this.product?.originalId;
+    if (this.product && id) {
+      this.productService.getProductInventory(id).subscribe(data => {
+        const inventoryLevel = data.data[0].inventory_level;
+        const quantityInCart = this.cartService.getQuantityInCart({ ...this.product, size });
+        this.currentQuantity = inventoryLevel - quantityInCart;
+        this.generateQuantities();
+      });
     }
+    this.errorMessage = null; // Clear error message when size is selected
   }
 
   addToCart(): void {
@@ -88,7 +112,13 @@ export class ItemDisplayComponent implements OnInit {
       return;
     }
 
-    const productToAdd = { ...this.product, size: this.sizes.length > 0 ? this.selectedSize : null };
+    console.log(this.quantities)
+    if(this.quantities.length === 0){
+      this.errorMessage = 'No inventory';
+      return;
+    }
+
+    const productToAdd = { ...this.product, size: this.sizes.length > 0 ? this.selectedSize : null, quantity: this.selectedQuantity };
     this.cartService.addToCart(productToAdd);
     this.router.navigateByUrl('/cart');
   }
@@ -103,7 +133,7 @@ export class ItemDisplayComponent implements OnInit {
 
   getSelectedVariantPrice(): string | null {
     if (this.product && this.product.variant) {
-      const selectedVariant = this.product.variant.find(variant => variant.size === this.selectedSize);
+      const selectedVariant = this.product.variant.find(variant => variant.size === this.selectedSize || (variant.size === undefined && variant.price));
       return selectedVariant ? selectedVariant.price : null;
     }
     return null;
@@ -111,5 +141,10 @@ export class ItemDisplayComponent implements OnInit {
 
   goBack(): void {
     this.location.back();
+  }
+  
+
+  generateQuantities(): void {
+    this.quantities = Array.from({ length: this.currentQuantity }, (_, i) => i + 1);
   }
 }

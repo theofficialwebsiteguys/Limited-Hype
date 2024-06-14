@@ -12,7 +12,15 @@ export class CartService {
 
   addToCart(product: any) {
     const currentCart = this.cart.value;
-    this.cart.next([...currentCart, product]);
+    const existingProductIndex = currentCart.findIndex(cartItem => cartItem.id === product.id && cartItem.size === product.size);
+
+    if (existingProductIndex > -1) {
+      currentCart[existingProductIndex].quantity = +currentCart[existingProductIndex].quantity + +product.quantity;
+    } else {
+      currentCart.push(product);
+    }
+
+    this.cart.next([...currentCart]);
     this.saveCart();
   }
   
@@ -22,14 +30,18 @@ export class CartService {
 
   removeFromCart(product: any) {
     const currentCart = this.cart.value;
-    const index = currentCart.indexOf(product);
+    const index = currentCart.findIndex(cartItem => cartItem.id === product.id && cartItem.size === product.size);
     if (index > -1) {
-      currentCart.splice(index, 1);
+      if (currentCart[index].quantity > 1) {
+        currentCart[index].quantity -= 1;
+      } else {
+        currentCart.splice(index, 1);
+      }
     }
     this.cart.next([...currentCart]);
     this.saveCart();
   }
-
+  
   clearCart() {
     this.cart.next([]);
     this.saveCart();
@@ -37,6 +49,11 @@ export class CartService {
 
   isInCart(product: any): boolean {
     return this.cart.value.some(cartItem => cartItem.id === product.id && cartItem.size === product.size);
+  }
+
+  getQuantityInCart(product: any): number {
+    const itemInCart = this.cart.value.find(cartItem => cartItem.id === product.id && cartItem.size === product.size);
+    return itemInCart ? itemInCart.quantity : 0;
   }
 
   private saveCart() {

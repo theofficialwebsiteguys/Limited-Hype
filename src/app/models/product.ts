@@ -9,6 +9,7 @@ export class Product {
       public brand: string,
       public featured: boolean,
       public tag: string,
+      public category: string,
       public variant: {
         originalVariantProductId: string,
         size: string,

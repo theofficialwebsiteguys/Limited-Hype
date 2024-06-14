@@ -21,7 +21,7 @@
                           <div>Size: {{item.size ? item.size : 'N/A'}}</div>
                       </td>
                       <td>
-                          1
+                          {{ item.quantity }}
                           <button class="btn btn-link" (click)="removeFromCart(item)">Remove</button>
                       </td>
                       <td>{{ (getSelectedVariantPrice(item) | currency)}}</td>

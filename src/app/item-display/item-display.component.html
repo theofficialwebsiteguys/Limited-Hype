@@ -39,11 +39,16 @@
         <span *ngFor="let size of sizes" 
               class="size" 
               [class.selected]="size === selectedSize" 
-              [class.disabled]="isInCart(getProductWithSize(size))"
               (click)="selectSize(size)"
-              [attr.disabled]="isInCart(getProductWithSize(size)) ? true : null">
+>
           {{ size }}
         </span>
+      </div>
+      <div class="form-group">
+        <label for="quantitySelect">Quantity</label>
+        <select id="quantitySelect" class="quantity form-control form-control-sm" [(ngModel)]="selectedQuantity">
+          <option *ngFor="let qty of quantities" [value]="qty">{{ qty }}</option>
+        </select>
       </div>
       <p class="authenticity">*AUTHENTICITY GUARANTEED*<br>
         IN STOCK & READY TO SHIP<br>
