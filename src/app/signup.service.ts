@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SignupService {
-  private signupUrl = 'http://localhost:3000/api/signup';
+  //private signupUrl = 'http://localhost:3000/api/signup';
+  private signupUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com/api/signup'
 
   constructor(private http: HttpClient) {}
 

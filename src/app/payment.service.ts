@@ -8,8 +8,8 @@ import { CartService } from './cart.service';
 })
 export class PaymentService {
 
-  private apiUrl = 'http://localhost:3000';
-  //private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com';
+  //private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'https://limited-hype-server-fc852c1e4c1b.herokuapp.com';
   constructor(private http: HttpClient, private cartService: CartService) {}
 
   // createCheckoutSession(products: { lightspeedId: string, name: string, price: number, quantity: number }[], currency: string, promotionCode: string): Observable<{ clientSecret: string }> {

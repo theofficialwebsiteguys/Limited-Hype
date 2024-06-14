@@ -12,19 +12,19 @@ const app = express();
 app.use(bodyParser.json());
 
 
-app.use(cors({
-  origin: 'http://localhost:4200', 
-  credentials: true,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: 'Content-Type,Authorization'
-}));
-
 // app.use(cors({
-//   origin: 'https://theofficialwebsiteguys.github.io', // Replace with your actual frontend URL
+//   origin: 'http://localhost:4200', 
 //   credentials: true,
 //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 //   allowedHeaders: 'Content-Type,Authorization'
 // }));
+
+app.use(cors({
+  origin: 'https://theofficialwebsiteguys.github.io', // Replace with your actual frontend URL
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: 'Content-Type,Authorization'
+}));
 
 const EXCHANGE_RATES = {
   EUR: 0.85,
@@ -313,7 +313,8 @@ app.post('/create-checkout-session', async (req, res) => {
       },
     },
     
-    return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
+    //return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
+    return_url: `https://theofficialwebsiteguys.github.io/success?session_id={CHECKOUT_SESSION_ID}`
   });
 
     //console.log(session)
@@ -696,7 +697,7 @@ async function registerSale(items) {
       tax_id: '062791b7-dd73-11ee-eaf5-fc25466965b1'
     }))
   };
-  
+
   try {
     const response = await axios.post('https://limitedhypellp.retail.lightspeed.app/api/register_sales', payload, {
       headers: {
