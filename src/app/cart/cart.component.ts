@@ -26,7 +26,7 @@ export class CartComponent implements OnInit{
 
   loadInventoryLevels(): void {
     this.cart.forEach(item => {
-      const id = item.variant.find((variant:any) => variant.size === item.size)?.originalVariantProductId || item.originalId;
+      const id = item.variant.find((variant: any) => variant.size === item.size)?.originalVariantProductId || item.originalId;
       if (id) {
         this.productService.getProductInventory(id).subscribe(data => {
           item.inventoryLevel = data.data[0].inventory_level;
@@ -59,5 +59,9 @@ export class CartComponent implements OnInit{
       return (selectedVariant ? selectedVariant.price : null) * product.quantity;
     }
     return null;
+  }
+
+  removeItem(item: any): void {
+    this.cartService.removeFromCart(item, item.quantity);
   }
 }
