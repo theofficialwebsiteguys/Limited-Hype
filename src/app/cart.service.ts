@@ -23,17 +23,17 @@ export class CartService {
     this.cart.next([...currentCart]);
     this.saveCart();
   }
-  
+
   getCart() {
     return this.cart.value;
   }
 
-  removeFromCart(product: any) {
+  removeFromCart(product: any, quantityToRemove: number) {
     const currentCart = this.cart.value;
     const index = currentCart.findIndex(cartItem => cartItem.id === product.id && cartItem.size === product.size);
     if (index > -1) {
-      if (currentCart[index].quantity > 1) {
-        currentCart[index].quantity -= 1;
+      if (currentCart[index].quantity > quantityToRemove) {
+        currentCart[index].quantity -= quantityToRemove;
       } else {
         currentCart.splice(index, 1);
       }
@@ -41,9 +41,14 @@ export class CartService {
     this.cart.next([...currentCart]);
     this.saveCart();
   }
-  
+
   clearCart() {
     this.cart.next([]);
+    this.saveCart();
+  }
+
+  updateCart(updatedCart: any[]) {
+    this.cart.next(updatedCart);
     this.saveCart();
   }
 

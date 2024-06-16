@@ -38,7 +38,7 @@ export class ProductService {
         let productIdCounter = 0;
   
         data.forEach((product: any) => {
-          if (product.name.includes("GRAND OPENING") || product.brand?.name === "Timberland") {
+          if (product.name.includes("GRAND OPENING") || product.brand?.name === "Timberland" || product.brand?.name === "Vintage") {
             return;
           }
           const variantParentId = product.variant_parent_id;
@@ -98,6 +98,7 @@ export class ProductService {
               parentProduct.imageUrl = variant.skuImages[0]?.url ? variant.skuImages[0].url : variant.image_url;
               parentProduct.brand = variant.brand?.name;
               parentProduct.category = variant.product_category?.name;
+              parentProduct.tag = variant.categories[0]?.name === 'featured' ? variant.categories[1]?.name : variant.categories[0]?.name
             }
           }
         });
@@ -112,6 +113,7 @@ export class ProductService {
               parentProduct.brand = product.brand?.name;
               parentProduct.featured = product.categories[0]?.name === 'featured';
               parentProduct.category = product.product_category?.name;
+              parentProduct.tag = product.categories[0]?.name === 'featured' ? product.categories[1]?.name : product.categories[0]?.name
             }
           }
         });
@@ -140,7 +142,7 @@ export class ProductService {
 
   getNikeProducts(): Observable<Product[]> {
     return this.organizedProducts$.pipe(
-      map(products => products.filter(product => product.brand === 'Nike' || product.brand === 'Nike SB'|| product.brand === 'Nike Dunk'|| product.brand === 'Nike Air Max'))
+      map(products => products.filter(product => product.brand === 'Nike' || product.brand === 'Nike SB'|| product.tag === 'Nike Dunk'|| product.tag === 'Nike Air Max'|| product.tag === 'Air Force 1'|| product.tag === 'Kobe'))
     );
   }
 
@@ -165,6 +167,12 @@ export class ProductService {
   getFeaturedProducts(): Observable<Product[]> {
     return this.organizedProducts$.pipe(
       map(products => products.filter(product => product.featured))
+    );
+  }
+
+  getOtherProducts(): Observable<Product[]> {
+    return this.organizedProducts$.pipe(
+      map(products => products.filter(product => product.brand === 'Used' || product.brand === 'New Balance'|| product.brand === 'Crocs'|| product.brand === 'Asics' ))
     );
   }
 

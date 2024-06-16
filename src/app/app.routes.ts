@@ -12,6 +12,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { SuccessComponent } from './success/success.component';
 import { ContactComponent } from './contact/contact.component';
 import { SearchResultsComponent } from './search-results/search-results.component';
+import { OtherComponent } from './other/other.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },  // Redirects to /home
@@ -48,6 +49,11 @@ export const routes: Routes = [
     { path: 'clothing/pharaoh-collection', component: ClothingComponent},
     { path: 'clothing/limited-hype', component: ClothingComponent},
     { path: 'clothing/kaws', component: ClothingComponent},
+    { path: 'other', component: OtherComponent},
+    { path: 'other/used', component: OtherComponent},
+    { path: 'other/new-balance', component: OtherComponent},
+    { path: 'other/crocs', component: OtherComponent},
+    { path: 'other/asics', component: OtherComponent},
     { path: 'shop', component: ShopComponent},
     { path: 'story', component: StoryComponent},
     { path: 'item/:id', component: ItemDisplayComponent },

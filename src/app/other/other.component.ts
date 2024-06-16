@@ -1,21 +1,19 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ProductService } from '../product.service';
-import { Product } from '../models/product';
+import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { FormsModule } from '@angular/forms';
+import { Observable, map } from 'rxjs';
+import { Product } from '../models/product';
+import { ProductService } from '../product.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-nike',
+  selector: 'app-other',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './nike.component.html',
-  styleUrls: ['./nike.component.scss']
+  imports: [CommonModule],
+  templateUrl: './other.component.html',
+  styleUrl: './other.component.scss'
 })
-export class NikeComponent implements OnInit {
-  nikeProducts$!: Observable<Product[]>;
+export class OtherComponent {
+  otherProducts$!: Observable<Product[]>;
   filteredProducts$!: Observable<Product[]>;
   sortOption: string = '';
   minPrice: number = 0;
@@ -29,19 +27,17 @@ export class NikeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.nikeProducts$ = this.productService.getNikeProducts().pipe(
+    this.otherProducts$ = this.productService.getOtherProducts().pipe(
       map(products => {
         const brand = this.route.snapshot.routeConfig?.path?.split('/')[1];
-        if (brand === 'sb') {
-          return products.filter(product => product.brand === 'Nike SB');
-        } else if (brand === 'dunk') {
-          return products.filter(product => product.tag === 'Nike Dunk');
-        } else if (brand === 'air-max') {
-          return products.filter(product => product.tag === 'Nike Air Max');
-        } else if (brand === 'air-force-1') {
-          return products.filter(product => product.tag === 'Air Force 1');
-        } else if (brand === 'kobe') {
-          return products.filter(product => product.tag === 'Kobe');
+        if (brand === 'used') {
+          return products.filter(product => product.brand === 'Used');
+        } else if (brand === 'new-balance') {
+          return products.filter(product => product.brand === 'New Balance');
+        } else if (brand === 'crocs') {
+          return products.filter(product => product.brand === 'Crocs');
+        } else if (brand === 'asics') {
+          return products.filter(product => product.brand === 'Asics');
         }else {
           return products;
         }
@@ -57,7 +53,7 @@ export class NikeComponent implements OnInit {
   }
 
   updateFilteredProducts(): void {
-    this.filteredProducts$ = this.nikeProducts$.pipe(
+    this.filteredProducts$ = this.otherProducts$.pipe(
       map(products => this.filterProducts(products)),
       map(products => this.sortProducts(products))
     );

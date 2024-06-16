@@ -39,8 +39,7 @@
         <span *ngFor="let size of sizes" 
               class="size" 
               [class.selected]="size === selectedSize" 
-              (click)="selectSize(size)"
->
+              (click)="selectSize(size)">
           {{ size }}
         </span>
       </div>
@@ -53,7 +52,7 @@
       <p class="authenticity">*AUTHENTICITY GUARANTEED*<br>
         IN STOCK & READY TO SHIP<br>
         NO RETURNS OR EXCHANGES
-        </p>
+      </p>
       <div class="product-actions">
         <button class="add-to-cart" 
                 (click)="addToCart()">

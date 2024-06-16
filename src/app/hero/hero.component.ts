@@ -221,6 +221,31 @@ export class HeroComponent implements OnInit {
           this.page_title = query ? `Search Results for "${query}"` : 'Search Results';
           this.heroHeight = '30vh';
           break;
+        case '/other':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'All Others';
+          this.heroHeight = '30vh';
+          break;
+        case '/other/used':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Pre Owned';
+          this.heroHeight = '30vh';
+          break;
+        case '/other/new-balance':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'New Balance';
+          this.heroHeight = '30vh';
+          break;
+        case '/other/crocs':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Crocs';
+          this.heroHeight = '30vh';
+          break;
+        case '/other/asics':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Asics';
+          this.heroHeight = '30vh';
+          break;
         // Add more cases as needed
         default:
           this.backgroundImage = 'assets/hero.webp';

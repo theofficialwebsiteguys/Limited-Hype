@@ -88,6 +88,18 @@ export class NavComponent implements OnInit {
                 { link: '/clothing/limited-hype', label: 'Limited Hype' }
             ],
             active: false
+        },
+        {
+            id: 'otherDropdown',
+            title: 'Other',
+            items: [
+                { link: '/other', label: 'View All' },
+                { link: '/other/used', label: 'Pre-Owned' },
+                { link: '/other/new-balance', label: 'New Balance' },
+                { link: '/other/crocs', label: 'Crocs' },
+                { link: '/other/asics', label: 'Asics' },
+            ],
+            active: false
         }
     ];
 
