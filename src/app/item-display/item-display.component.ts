@@ -71,6 +71,8 @@ export class ItemDisplayComponent implements OnInit {
         });
       }
 
+      console.log(this.product)
+
   }
 
   populateSizes(): void {

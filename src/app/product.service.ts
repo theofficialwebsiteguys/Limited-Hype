@@ -45,14 +45,17 @@ export class ProductService {
           const featured = product.categories[0]?.name === 'featured';
           const tag = featured ? product.categories[1]?.name : product.categories[0]?.name;
   
+          const images = product.images.map((img: any) => img.url); 
+
           if (!variantParentId) {
             // It's a parent product
             const newProduct = new Product(
               product.id,
               productIdCounter++,
               product.name,
-              product.image_url,
-              product.images.length > 1 ? product.images[1].url : '',
+              images,
+              // product.images[0]?.url,
+              // product.images.length > 1 ? product.images[1]?.url : '',
               product.brand?.name,
               featured,
               tag,
@@ -69,8 +72,9 @@ export class ProductService {
                 variantParentId,
                 productIdCounter++,
                 '', // Placeholder name
-                '', // Placeholder image URL
-                '',
+                [],
+                // '', // Placeholder image URL
+                // '',
                 '', // Placeholder brand
                 false, // Placeholder featured flag
                 '',
@@ -86,16 +90,21 @@ export class ProductService {
         variants.forEach(variant => {
           const parentProduct = organizedProductsMap.get(variant.variant_parent_id);
           if (parentProduct) {
+            const variantImages = variant.skuImages.map((img: any) => img.url);
             parentProduct.variant.push({
               originalVariantProductId: variant.id,
               size: variant.variant_options[0]?.value,
               price: variant.price_including_tax
             });
+
+             // Merge variant images into the parent's images array
+             parentProduct.images = [...new Set([...parentProduct.images, ...variantImages])];
   
             // If the placeholder parent has empty details, fill them with the first variant's details
-            if (!parentProduct.name && !parentProduct.imageUrl && !parentProduct.brand) {
+            if (!parentProduct.name && !parentProduct.brand) {
               parentProduct.name = variant.name;
-              parentProduct.imageUrl = variant.skuImages[0]?.url ? variant.skuImages[0].url : variant.image_url;
+              //parentProduct.imageUrl = variant.skuImages[0]?.url ? variant.skuImages[0].url : variant.images[0]?.url;
+              parentProduct.images = [...new Set([...parentProduct.images, ...variantImages])];
               parentProduct.brand = variant.brand?.name;
               parentProduct.category = variant.product_category?.name;
               parentProduct.tag = variant.categories[0]?.name === 'featured' ? variant.categories[1]?.name : variant.categories[0]?.name
@@ -103,20 +112,22 @@ export class ProductService {
           }
         });
   
-        // Ensure placeholders are updated with actual parent product data
-        data.forEach((product: any) => {
+         // Ensure placeholders are updated with actual parent product data
+         data.forEach((product: any) => {
           if (!product.variant_parent_id && organizedProductsMap.has(product.id)) {
-            const parentProduct = organizedProductsMap.get(product.id);
-            if (parentProduct) {
-              parentProduct.name = product.name;
-              parentProduct.imageUrl = product.image_url;
-              parentProduct.brand = product.brand?.name;
-              parentProduct.featured = product.categories[0]?.name === 'featured';
-              parentProduct.category = product.product_category?.name;
-              parentProduct.tag = product.categories[0]?.name === 'featured' ? product.categories[1]?.name : product.categories[0]?.name
-            }
+              const parentProduct = organizedProductsMap.get(product.id);
+              if (parentProduct) {
+                  const productImages = product.images.map((img: any) => img.url);  // Update images array
+                  parentProduct.name = product.name;
+                  parentProduct.images = [...new Set([...parentProduct.images, ...productImages])];
+                  parentProduct.brand = product.brand?.name;
+                  parentProduct.featured = product.categories[0]?.name === 'featured';
+                  parentProduct.category = product.product_category?.name;
+                  parentProduct.tag = product.categories[0]?.name === 'featured' ? product.categories[1]?.name : product.categories[0]?.name;
+              }
           }
-        });
+      });
+      
   
         const organizedProducts = Array.from(organizedProductsMap.values());
         organizedProducts.sort((a, b) => a.name.localeCompare(b.name));

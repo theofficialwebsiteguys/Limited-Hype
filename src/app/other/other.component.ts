@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Product } from '../models/product';
 import { ProductService } from '../product.service';
 import { CommonModule } from '@angular/common';
@@ -10,9 +11,9 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './other.component.html',
-  styleUrl: './other.component.scss'
+  styleUrls: ['./other.component.scss']
 })
-export class OtherComponent {
+export class OtherComponent implements OnInit {
   otherProducts$!: Observable<Product[]>;
   filteredProducts$!: Observable<Product[]>;
   sortOption: string = '';
@@ -38,7 +39,7 @@ export class OtherComponent {
           return products.filter(product => product.brand === 'Crocs');
         } else if (brand === 'asics') {
           return products.filter(product => product.brand === 'Asics');
-        }else {
+        } else {
           return products;
         }
       })
@@ -63,16 +64,16 @@ export class OtherComponent {
 
   filterProducts(products: Product[]): Product[] {
     return products.filter(product => 
-      product.variant[0].price >= this.minPrice.toString() && product.variant[0].price <= this.maxPrice.toString()
+      parseFloat(product.variant[0].price) >= this.minPrice && parseFloat(product.variant[0].price) <= this.maxPrice
     );
   }
 
   sortProducts(products: Product[]): Product[] {
     switch (this.sortOption) {
       case 'priceAsc':
-        return products.sort((a:any, b:any) => a.variant[0].price - b.variant[0].price);
+        return products.sort((a, b) => parseFloat(a.variant[0].price) - parseFloat(b.variant[0].price));
       case 'priceDesc':
-        return products.sort((a:any, b:any) => b.variant[0].price - a.variant[0].price);
+        return products.sort((a, b) => parseFloat(b.variant[0].price) - parseFloat(a.variant[0].price));
       case 'nameAsc':
         return products.sort((a, b) => a.name.localeCompare(b.name));
       case 'nameDesc':
@@ -82,7 +83,7 @@ export class OtherComponent {
     }
   }
 
-  viewProductDetail(product: any): void {
+  viewProductDetail(product: Product): void {
     this.router.navigate(['/item', product.id], { state: { product } });
   }
 }

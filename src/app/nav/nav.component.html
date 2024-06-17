@@ -125,7 +125,7 @@
     <span class="close-search-bar" (click)="closeSearchBar()">&times;</span>
     <div class="search-results-container">
         <div *ngFor="let product of searchResults" class="search-result-item" (click)="viewProductDetail(product)">
-            <img [src]="product.imageUrl" alt="{{product.name}}" class="search-result-image" />
+            <img [src]="product.images[0]" alt="{{product.name}}" class="search-result-image" />
             <div class="search-result-details">
                 <p class="search-result-name">{{ product.name }}</p>
                 <p class="search-result-category">{{ product.brand }}</p>

@@ -19,14 +19,14 @@
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of filteredProducts">
         <div class="card h-100">
           <div class="card-img-container">
-            <ng-container *ngIf="product.imageBack; else singleImage">
+            <!-- <ng-container *ngIf="product.images.length > 1; else singleImage">
               <div id="carousel-{{product.id}}" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                   <div class="carousel-item active" (click)="viewProductDetail(product)">
-                    <img [src]="product.imageUrl" class="d-block w-100" alt="{{product.name}}">
+                    <img [src]="product.images[0]" class="d-block w-100" alt="{{product.name}}">
                   </div>
                   <div class="carousel-item" (click)="viewProductDetail(product)">
-                    <img [src]="product.imageBack" class="d-block w-100" alt="{{product.name}}">
+                    <img [src]="product.images[1]" class="d-block w-100" alt="{{product.name}}">
                   </div>
                 </div>
                 <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel-' + product.id" data-bs-slide="prev">
@@ -38,10 +38,10 @@
                   <span class="visually-hidden">Next</span>
                 </button>
               </div>
-            </ng-container>
-            <ng-template #singleImage>
-              <img [src]="product.imageUrl" class="card-img-top" alt="{{product.name}}" (click)="viewProductDetail(product)">
-            </ng-template>
+            </ng-container> -->
+            <!-- <ng-template #singleImage> -->
+              <img [src]="product.images[0]" class="card-img-top" alt="{{product.name}}" (click)="viewProductDetail(product)">
+            <!-- </ng-template> -->
           </div>
           <div class="card-body text-center">
             <h5 class="card-title">{{product.name}}</h5>

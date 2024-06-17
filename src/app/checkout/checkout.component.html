@@ -16,14 +16,28 @@
           <span class="bubble">GBP</span>
         </label>
       </div>
-      <div id="address-element" class="address-element"></div>
+      <div class="address-inputs">
+        <input type="text" id="name" [(ngModel)]="name" placeholder="Full Name">
+        <input type="text" id="line1" [(ngModel)]="address.line1" placeholder="Address Line 1" #line1>
+        <input type="text" id="line2" [(ngModel)]="address.line2" placeholder="Address Line 2" #line2>
+        <input type="text" id="city" [(ngModel)]="address.city" placeholder="City" #city>
+        <input type="text" id="state" [(ngModel)]="address.state" placeholder="State" #state>
+        <input type="text" id="postal_code" [(ngModel)]="address.postal_code" placeholder="Postal Code" #postal_code>
+        <input type="text" id="country" [(ngModel)]="address.country" placeholder="Country" #country>
+      </div>
       <button class="btn btn-primary" (click)="initialize()">Calculate Checkout</button>
     </div>
     <div class="payment-section">
-      <div id="checkout" class="">
-        <!-- Checkout will insert the payment form here -->
-      </div>
+      <ng-container *ngIf="loading; else checkoutTemplate">
+        <div class="text-center m-5 p-5">
+          <img src="assets/spinning-shoe.gif" alt="Loading..." class="loading-gif">
+        </div>
+      </ng-container>
+      <ng-template #checkoutTemplate>
+        <div id="checkout" class="">
+          <!-- Checkout will insert the payment form here -->
+        </div>
+      </ng-template>
     </div>
   </div>
 </div>
-  

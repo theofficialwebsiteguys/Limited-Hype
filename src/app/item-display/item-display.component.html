@@ -8,14 +8,11 @@
   </div>
   <div class="row">
     <div class="col-12 col-md-6">
-      <div *ngIf="product.imageUrl && product.imageBack; else singleImage">
+      <div *ngIf="product.images.length > 1; else singleImage">
         <div id="carousel-{{product.id}}" class="carousel slide" data-bs-ride="carousel" (click)="$event.stopPropagation()">
           <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img [src]="product.imageUrl" class="d-block w-100" alt="{{product.name}}">
-            </div>
-            <div class="carousel-item">
-              <img [src]="product.imageBack" class="d-block w-100" alt="{{product.name}}">
+            <div *ngFor="let image of product.images; let i = index" class="carousel-item" [ngClass]="{'active': i === 0}">
+              <img [src]="image" class="d-block w-100" alt="{{product.name}}">
             </div>
           </div>
           <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel-' + product.id" data-bs-slide="prev">
@@ -29,7 +26,7 @@
         </div>
       </div>
       <ng-template #singleImage>
-        <img [src]="product.imageUrl" class="img-fluid" alt="{{product.name}}">
+        <img [src]="product.images[0]" class="img-fluid" alt="{{product.name}}">
       </ng-template>
     </div>
     <div class="col-12 col-md-6">
@@ -73,7 +70,7 @@
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of featured">
         <div class="card h-100" (click)="viewProductDetail(product)">
           <div class="card-img-container">
-            <img [src]="product.imageUrl" class="card-img-top" alt="{{product.name}}">
+            <img [src]="product.images[0]" class="card-img-top" alt="{{product.name}}">
           </div>
           <div class="card-body text-center">
             <h5 class="card-title">{{product.name}}</h5>

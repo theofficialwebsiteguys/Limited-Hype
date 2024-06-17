@@ -323,6 +323,19 @@
   border-radius: 5px;
 }
 
+@media only screen and (max-width: 1645px) {
+  #navbarScroll {
+    place-content: center !important;
+  }
+
+  .navbar-nav {
+    display: flex;
+    flex-wrap: wrap;
+    width: 500px;
+    justify-content: space-evenly;
+  }
+}
+
 
 @media only screen and (max-width: 1406px) {
   #navbarScroll {

@@ -16,7 +16,7 @@
         <tbody>
           <tr *ngFor="let item of cart">
             <td>
-              <img [src]="item.imageUrl" class="img-fluid" alt="{{item.name}}" style="max-width: 100px;">
+              <img [src]="item.images[0]" class="img-fluid" alt="{{item.name}}" style="max-width: 100px;">
               <div>{{item.name}}</div>
               <div>Size: {{item.size ? item.size : 'N/A'}}</div>
             </td>
