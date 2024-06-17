@@ -99,12 +99,13 @@ export class ProductService {
 
              // Merge variant images into the parent's images array
              parentProduct.images = [...new Set([...parentProduct.images, ...variantImages])];
-  
+
             // If the placeholder parent has empty details, fill them with the first variant's details
             if (!parentProduct.name && !parentProduct.brand) {
               parentProduct.name = variant.name;
               //parentProduct.imageUrl = variant.skuImages[0]?.url ? variant.skuImages[0].url : variant.images[0]?.url;
               parentProduct.images = [...new Set([...parentProduct.images, ...variantImages])];
+              parentProduct.featured = variant.categories[0]?.name === 'featured';
               parentProduct.brand = variant.brand?.name;
               parentProduct.category = variant.product_category?.name;
               parentProduct.tag = variant.categories[0]?.name === 'featured' ? variant.categories[1]?.name : variant.categories[0]?.name
