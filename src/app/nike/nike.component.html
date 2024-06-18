@@ -22,7 +22,7 @@
           </div>
           <div class="card-body text-center">
             <h5 class="card-title">{{product.name}}</h5>
-            <p class="card-text">{{product.variant[0].price | currency}}</p>
+            <p class="card-text">{{ getMinPrice(product) | currency }}</p>
           </div>
         </div>
       </div>

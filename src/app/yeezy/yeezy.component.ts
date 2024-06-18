@@ -93,4 +93,11 @@ export class YeezyComponent {
   viewProductDetail(product: any): void {
     this.router.navigate(['/item', product.id], { state: { product } });
   }
+
+  getMinPrice(product: Product) {
+    if (product.variant && product.variant.length > 0) {
+      return Math.min(...product.variant.map(v => parseFloat(v.price)));
+    }
+    return null;
+  }
 }
