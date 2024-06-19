@@ -49,6 +49,7 @@ export const routes: Routes = [
     { path: 'clothing/pharaoh-collection', component: ClothingComponent},
     { path: 'clothing/limited-hype', component: ClothingComponent},
     { path: 'clothing/kaws', component: ClothingComponent},
+    { path: 'clothing/sp5der', component: ClothingComponent},
     { path: 'other', component: OtherComponent},
     { path: 'other/used', component: OtherComponent},
     { path: 'other/new-balance', component: OtherComponent},

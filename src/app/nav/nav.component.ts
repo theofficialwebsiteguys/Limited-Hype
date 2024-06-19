@@ -85,7 +85,8 @@ export class NavComponent implements OnInit {
                 { link: '/clothing/hellstar', label: 'Hellstar' },
                 { link: '/clothing/kaws', label: 'KAWS' },
                 { link: '/clothing/pharaoh-collection', label: 'Pharaoh Collections' },
-                { link: '/clothing/limited-hype', label: 'Limited Hype' }
+                { link: '/clothing/limited-hype', label: 'Limited Hype' },
+                { link: '/clothing/sp5der', label: 'Sp5der' }
             ],
             active: false
         },

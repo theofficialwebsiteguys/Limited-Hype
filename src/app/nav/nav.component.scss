@@ -127,7 +127,7 @@
   font-size: 24px;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
 
   .slide-in-menu {
     display: block;
@@ -332,8 +332,14 @@
     display: flex;
     flex-wrap: wrap;
     width: 500px;
-    justify-content: space-evenly;
+    // justify-content: space-evenly;
   }
+
+  .right{
+    justify-content: right !important;
+  }
+
+
 }
 
 
@@ -345,7 +351,11 @@
   .navbar-nav {
     display: flex;
     flex-wrap: wrap;
-    width: 300px;
-    justify-content: space-evenly;
+    width: 400px;
+    // justify-content: space-evenly;
+  }
+
+  .left{
+    width: auto;
   }
 }

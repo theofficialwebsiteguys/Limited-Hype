@@ -7,7 +7,7 @@
 
         <!-- Left side links -->
         <div class="collapse navbar-collapse justify-content-start order-1" id="navbarScrollLeft">
-            <ul class="navbar-nav mb-2 mb-lg-0">
+            <ul class="navbar-nav left mb-2 mb-lg-0">
                 <li class="nav-item" (click)="closeMenu()">
                     <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
                 </li>
@@ -32,7 +32,7 @@
 
         <!-- Right side links -->
         <div class="collapse navbar-collapse justify-content-end order-3" id="navbarScrollRight">
-            <ul class="navbar-nav mb-2 mb-lg-0">
+            <ul class="navbar-nav right mb-2 mb-lg-0">
                 <li class="nav-item dropdown" *ngFor="let menu of dropdownMenus">
                     <a class="nav-link dropdown-toggle" id="{{menu.id}}" [routerLink]="menu.items[0].link" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {{menu.title}}

@@ -48,7 +48,9 @@ export class ClothingComponent {
           return products.filter(product => product.brand === 'Kaws');
         } else if (brand === 'supreme') {
           return products.filter(product => product.brand === 'Supreme');
-        } else {
+        } else if (brand === 'sp5der') {
+          return products.filter(product => product.brand === 'Sp5der');
+        }else {
           return products;
         }
       })
