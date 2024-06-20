@@ -99,6 +99,7 @@ export class NavComponent implements OnInit {
                 { link: '/other/new-balance', label: 'New Balance' },
                 { link: '/other/crocs', label: 'Crocs' },
                 { link: '/other/asics', label: 'Asics' },
+                { link: '/other/sneaker-care', label: 'Sneaker Care' },
             ],
             active: false
         }

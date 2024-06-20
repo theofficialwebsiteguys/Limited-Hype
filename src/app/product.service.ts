@@ -184,7 +184,7 @@ export class ProductService {
 
   getOtherProducts(): Observable<Product[]> {
     return this.organizedProducts$.pipe(
-      map(products => products.filter(product => product.brand === 'Used' || product.brand === 'New Balance'|| product.brand === 'Crocs'|| product.brand === 'Asics' ))
+      map(products => products.filter(product => product.brand === 'Used' || product.brand === 'New Balance' || product.brand === 'Crocs' || product.brand === 'Asics' || product.brand === 'Sneaker Care'))
     );
   }
 

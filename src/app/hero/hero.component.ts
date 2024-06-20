@@ -76,9 +76,24 @@ export class HeroComponent implements OnInit {
           this.page_title = 'Jordan 3';
           this.heroHeight = '30vh';
           break;
+        case '/jordan/jordan-4':
+          this.backgroundImage = 'assets/jordan-hero.jpg';
+          this.page_title = 'Jordan 4';
+          this.heroHeight = '30vh';
+          break;
+        case '/jordan/jordan-5':
+          this.backgroundImage = 'assets/jordan-hero.jpg';
+          this.page_title = 'Jordan 5';
+          this.heroHeight = '30vh';
+          break;
         case '/jordan/jordan-11':
           this.backgroundImage = 'assets/jordan-hero.jpg';
           this.page_title = 'Jordan 11';
+          this.heroHeight = '30vh';
+          break;
+        case '/jordan/jordan-12':
+          this.backgroundImage = 'assets/jordan-hero.jpg';
+          this.page_title = 'Jordan 12';
           this.heroHeight = '30vh';
           break;
         case '/yeezy':
@@ -161,6 +176,11 @@ export class HeroComponent implements OnInit {
           this.page_title = 'KAWS';
           this.heroHeight = '30vh';
           break;
+        case '/clothing/sp5der':
+          this.backgroundImage = 'assets/clothing-hero.jpg';
+          this.page_title = 'Sp5der';
+          this.heroHeight = '30vh';
+          break;
         case '/story':
           this.backgroundImage = 'assets/hero.webp';
           this.page_title = 'Our Story';
@@ -182,32 +202,32 @@ export class HeroComponent implements OnInit {
           this.heroHeight = '30vh';
           break;
         case '/nike/sb':
-          this.backgroundImage = 'assets/hero.webp';
+          this.backgroundImage = 'assets/nike-hero.jpg';
           this.page_title = 'Nike SB';
           this.heroHeight = '30vh';
           break;
         case '/nike/dunk':
-          this.backgroundImage = 'assets/hero.webp';
+          this.backgroundImage = 'assets/nike-hero.jpg';
           this.page_title = 'Nike Dunk';
           this.heroHeight = '30vh';
           break;
         case '/nike/air-max':
-          this.backgroundImage = 'assets/hero.webp';
+          this.backgroundImage = 'assets/nike-hero.jpg';
           this.page_title = 'Air Max';
           this.heroHeight = '30vh';
           break;
         case '/nike/air-force-1':
-          this.backgroundImage = 'assets/hero.webp';
+          this.backgroundImage = 'assets/nike-hero.jpg';
           this.page_title = 'Air Force 1';
           this.heroHeight = '30vh';
           break;
         case '/nike/kobe':
-          this.backgroundImage = 'assets/hero.webp';
+          this.backgroundImage = 'assets/nike-hero.jpg';
           this.page_title = 'Kobe';
           this.heroHeight = '30vh';
           break;
         case '/clothing/supreme':
-          this.backgroundImage = 'assets/hero.webp';
+          this.backgroundImage = 'assets/clothing-hero.jpg';
           this.page_title = 'Supreme';
           this.heroHeight = '30vh';
           break;
@@ -244,6 +264,11 @@ export class HeroComponent implements OnInit {
         case '/other/asics':
           this.backgroundImage = 'assets/hero.webp';
           this.page_title = 'Asics';
+          this.heroHeight = '30vh';
+          break;
+        case '/other/sneaker-care':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Sneaker Care';
           this.heroHeight = '30vh';
           break;
         // Add more cases as needed

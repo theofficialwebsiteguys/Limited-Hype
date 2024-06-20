@@ -55,6 +55,7 @@ export const routes: Routes = [
     { path: 'other/new-balance', component: OtherComponent},
     { path: 'other/crocs', component: OtherComponent},
     { path: 'other/asics', component: OtherComponent},
+    { path: 'other/sneaker-care', component: OtherComponent},
     { path: 'shop', component: ShopComponent},
     { path: 'story', component: StoryComponent},
     { path: 'item/:id', component: ItemDisplayComponent },

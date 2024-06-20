@@ -39,6 +39,8 @@ export class OtherComponent implements OnInit {
           return products.filter(product => product.brand === 'Crocs');
         } else if (brand === 'asics') {
           return products.filter(product => product.brand === 'Asics');
+        } else if (brand === 'sneaker-care') {
+          return products.filter(product => product.brand === 'Sneaker Care');
         } else {
           return products;
         }
