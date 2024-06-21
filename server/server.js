@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const NodeCache = require('node-cache');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const app = express();
 
@@ -99,6 +100,36 @@ app.post('/send-email', (req, res) => {
     to: 'jaredhfinn@gmail.com',
     subject: `Contact form submission from ${name}`,
     text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nComment: ${comment}`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return res.status(500).send(error.toString());
+    }
+    res.status(200).send('Email sent: ' + info.response);
+  });
+});
+
+app.post('/send-confirm-email', (req, res) => {
+  const { orderNo, products, email } = req.body;
+
+   // Format products into a readable HTML string
+   const productDetailsText = products.map(product => {
+    return `Name: ${product.name}, Quantity: ${product.quantity}, Price: $${product.price}`;
+  }).join('\n');
+
+  const productDetailsHtml = products.map(product => {
+    return `<p><strong>Name:</strong> ${product.name}<br><strong>Quantity:</strong> ${product.quantity}<br><strong>Price:</strong> $${product.price}</p>`;
+  }).join('');
+
+  const mailOptions = {
+    from: email,
+    to: `${email}`,
+    subject: `Confirmation Order - ${orderNo}`,
+    text: `Order No: ${orderNo}\nProducts:\n${productDetailsText}\n`,
+    html: `<p><strong>Order #:</strong> ${orderNo}</p>
+           <p><strong>Products:</strong></p>
+           ${productDetailsHtml}`
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -284,6 +315,8 @@ app.post('/create-checkout-session', async (req, res) => {
             },
           ];
 
+  const orderId = generateUniqueOrderId();
+
   const session = await stripe.checkout.sessions.create({
     ui_mode: 'embedded',
     payment_method_types: ['card'],
@@ -312,7 +345,9 @@ app.post('/create-checkout-session', async (req, res) => {
         }
       },
     },
-    
+    metadata: {
+      order_id: orderId
+    },
     //return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
     return_url: `https://theofficialwebsiteguys.github.io/success?session_id={CHECKOUT_SESSION_ID}`
   });
@@ -325,6 +360,15 @@ app.post('/create-checkout-session', async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+
+
+function generateUniqueOrderId() {
+  const timestamp = Date.now().toString(); // Get current timestamp
+  const randomString = crypto.randomBytes(4).toString('hex'); // Generate a random string
+  const orderId = `ORDER-${timestamp}-${randomString}`; // Combine to form the unique order ID
+
+  return orderId;
+}
 
 
 // app.post('/create-checkout-session', async (req, res) => {

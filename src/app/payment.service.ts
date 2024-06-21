@@ -51,7 +51,25 @@ export class PaymentService {
       }
     };
     return this.http.post(`${this.apiUrl}/api/checkout-session`, soldProducts, { params }).pipe(
-      tap(() => clearCache())
+      tap((session: any) => {  
+        const emailData = {
+          orderNo: session.metadata.order_id,
+          products: soldProducts,
+          email: session.customer_details.email
+        };
+  
+        // Send email confirmation
+        this.http.post('https://limited-hype-server-fc852c1e4c1b.herokuapp.com/send-confirm-email', emailData).subscribe(
+          response => {
+            console.log('Email sent successfully', response);
+            clearCache(); // Clear cache after email is sent
+          },
+          error => {
+            console.error('Error sending email', error);
+            clearCache(); // Optionally clear cache even if email fails to send
+          }
+        );
+      })
     );
   }
 }

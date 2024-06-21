@@ -297,4 +297,16 @@ export class HeroComponent implements OnInit {
     const videoElement = event.target as HTMLVideoElement;
     videoElement.muted = true;
   }
+
+  ngAfterViewInit(): void {
+    this.muteVideo();
+  }
+
+  private muteVideo(): void {
+    const heroVideo = document.getElementById('heroVideo') as HTMLVideoElement;
+    if (heroVideo) {
+      heroVideo.muted = true;
+      heroVideo.setAttribute('muted', 'true');
+    }
+  }
 }

@@ -18,7 +18,7 @@ export class SuccessComponent implements OnInit {
   error: string | null = null;
   subscriptionEmail: string = '';
 
-  constructor(private router: Router, private route: ActivatedRoute, private paymentService: PaymentService) { }
+  constructor(private router: Router, private route: ActivatedRoute, private paymentService: PaymentService, private http: HttpClient) { }
 
   ngOnInit(): void {
     this.sessionId = this.route.snapshot.queryParamMap.get('session_id');
