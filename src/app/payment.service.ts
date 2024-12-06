@@ -33,7 +33,7 @@ export class PaymentService {
   getCheckoutSession(sessionId: string): Observable<any> {
     this.cartService.clearCart()
     const params = new HttpParams().set('session_id', sessionId);
-    const soldProducts = JSON.parse(localStorage.getItem('soldProducts') || '[]');
+    const soldProducts = JSON.parse(localStorage.getItem('soldProducts') ?? '[]');
     const clearCache = () => {
       // Clear local storage
       localStorage.clear();
@@ -52,6 +52,7 @@ export class PaymentService {
     };
     return this.http.post(`${this.apiUrl}/api/checkout-session`, soldProducts, { params }).pipe(
       tap((session: any) => {  
+        console.log(session)
         const emailData = {
           orderNo: session.metadata.order_id,
           products: soldProducts,
@@ -59,7 +60,7 @@ export class PaymentService {
         };
   
         // Send email confirmation
-        this.http.post('https://limited-hype-server-fc852c1e4c1b.herokuapp.com/send-confirm-email', emailData).subscribe(
+        this.http.post(`${this.apiUrl}/send-confirm-email`, emailData).subscribe(
           response => {
             console.log('Email sent successfully', response);
             clearCache(); // Clear cache after email is sent

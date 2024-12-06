@@ -19,7 +19,8 @@ export class YeezyComponent {
   minPrice: number = 0;
   maxPrice: number = Infinity;
   filteredProductsCount: number = 0;
-
+  sizeFilter: string = '';
+  availableSizes: string[] = [];
 
   constructor(
     private productService: ProductService,
@@ -27,10 +28,19 @@ export class YeezyComponent {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit(){
-    //this.yeezyProducts$ = this.productService.getYeezyProducts();
+  ngOnInit() {
+    // Subscribe to query parameters to initialize filters and sorting
+    this.route.queryParams.subscribe(params => {
+      this.sortOption = params['sort'] || '';
+      this.sizeFilter = params['size'] || '';
+      this.minPrice = params['minPrice'] ? +params['minPrice'] : 0;
+      this.maxPrice = params['maxPrice'] ? +params['maxPrice'] : Infinity;
 
+      this.updateProducts();
+    });
+  }
 
+  updateProducts() {
     this.yeezyProducts$ = this.productService.getYeezyProducts().pipe(
       map(products => {
         const tag = this.route.snapshot.routeConfig?.path?.split('/')[1];
@@ -42,22 +52,33 @@ export class YeezyComponent {
           return products.filter(product => product.tag === '350');
         } else if (tag === '450') {
           return products.filter(product => product.tag === '450');
-        }else if (tag === '500') {
+        } else if (tag === '500') {
           return products.filter(product => product.tag === '500');
-        }else if (tag === '700') {
+        } else if (tag === '700') {
           return products.filter(product => product.tag === '700');
-        }else {
+        } else {
           return products;
         }
       })
     );
 
-    this.updateFilteredProducts();
+    // Populate available sizes
+    this.yeezyProducts$.subscribe(products => {
+      this.availableSizes = Array.from(new Set(products.flatMap(product => product.variant.map(v => v.size))))
+        .sort((a, b) => {
+          const numA = parseFloat(a);
+          const numB = parseFloat(b);
+          return numA - numB; // Sort numerically
+        });
+
+      this.updateFilteredProducts();
+    });
   }
 
   onSortChange(event: any): void {
     this.sortOption = event.target.value;
     this.updateFilteredProducts();
+    this.updateQueryParams();
   }
 
   updateFilteredProducts(): void {
@@ -71,16 +92,20 @@ export class YeezyComponent {
 
   filterProducts(products: Product[]): Product[] {
     return products.filter(product => 
-      product.variant[0].price >= this.minPrice.toString() && product.variant[0].price <= this.maxPrice.toString()
+      product.variant.some((v:any) => 
+        v.price >= this.minPrice && 
+        v.price <= this.maxPrice && 
+        (this.sizeFilter ? v.size === this.sizeFilter : true)
+      )
     );
   }
 
   sortProducts(products: Product[]): Product[] {
     switch (this.sortOption) {
       case 'priceAsc':
-        return products.sort((a:any, b:any) => a.variant[0].price - b.variant[0].price);
+        return products.sort((a: any, b: any) => a.variant[0].price - b.variant[0].price);
       case 'priceDesc':
-        return products.sort((a:any, b:any) => b.variant[0].price - a.variant[0].price);
+        return products.sort((a: any, b: any) => b.variant[0].price - a.variant[0].price);
       case 'nameAsc':
         return products.sort((a, b) => a.name.localeCompare(b.name));
       case 'nameDesc':
@@ -91,7 +116,15 @@ export class YeezyComponent {
   }
 
   viewProductDetail(product: any): void {
-    this.router.navigate(['/item', product.id], { state: { product } });
+    this.router.navigate(['/item', product.originalId], {
+      state: { product },
+      queryParams: {
+        sort: this.sortOption,
+        size: this.sizeFilter,
+        minPrice: this.minPrice,
+        maxPrice: this.maxPrice
+      }
+    });
   }
 
   getMinPrice(product: Product) {
@@ -100,4 +133,37 @@ export class YeezyComponent {
     }
     return null;
   }
+
+  onSizeFilterChange(event: any): void {
+    this.sizeFilter = event.target.value;
+    this.updateFilteredProducts();
+    this.updateQueryParams();
+  }
+
+  updateQueryParams() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        sort: this.sortOption,
+        size: this.sizeFilter,
+        minPrice: this.minPrice,
+        maxPrice: this.maxPrice
+      },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  clearFilters(): void {
+    this.sortOption = '';
+    this.sizeFilter = '';
+    this.minPrice = 0;
+    this.maxPrice = Infinity;
+  
+    // Reset the filtered products
+    this.updateFilteredProducts();
+  
+    // Clear query parameters
+    this.updateQueryParams();
+  }
+  
 }

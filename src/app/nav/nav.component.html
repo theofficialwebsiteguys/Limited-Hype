@@ -106,10 +106,6 @@
                 
                       </section>
                 
-                      <!-- <button class="custom-button"  routerLink="/contact" routerLinkActive="active">
-                        Contact <span class="arrow">→</span>
-                      </button> -->
-                      
                       
                     </div>
                 </div>
@@ -120,9 +116,28 @@
 
 <!-- Search Bar Container -->
 <div id="searchBarContainer" class="search-bar-container">
-    <input #searchInput type="text" class="search-bar" placeholder="Search..." (input)="onSearch($event)" (keydown)="onSearchEnter($event)" />
-
-    <span class="close-search-bar" (click)="closeSearchBar()">&times;</span>
+    <div class="search-bar-wrapper">
+        <div class="input-container">
+            <input
+                #searchInput
+                type="text"
+                class="search-bar"
+                placeholder="Search..."
+                (input)="onSearch($event)"
+                (keydown)="onSearchEnter($event)" />
+            <i
+                class="fas fa-times clear-input-button"
+                *ngIf="searchInput.value.length > 0"
+                (click)="clearInput(searchInput)">
+            </i>
+        </div>
+        <i
+            class="fas fa-search search-button"
+            (click)="onSearchButtonClick($event)">
+        </i>
+        <i class="fas fa-times close-search-bar" (click)="closeSearchBar()"></i>
+    </div>
+    
     <div class="search-results-container">
         <div *ngFor="let product of searchResults" class="search-result-item" (click)="viewProductDetail(product)">
             <img [src]="product.images[0]" alt="{{product.name}}" class="search-result-image" />
@@ -136,5 +151,8 @@
         </div>
     </div>
 </div>
+
+  
+
 
 <app-hero></app-hero>

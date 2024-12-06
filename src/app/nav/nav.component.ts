@@ -53,6 +53,7 @@ export class NavComponent implements OnInit {
                 { link: '/jordan/jordan-3', label: 'Jordan 3' },
                 { link: '/jordan/jordan-4', label: 'Jordan 4' },
                 { link: '/jordan/jordan-5', label: 'Jordan 5' },
+                { link: '/jordan/jordan-6', label: 'Jordan 6' },
                 { link: '/jordan/jordan-11', label: 'Jordan 11' },
                 { link: '/jordan/jordan-12', label: 'Jordan 12' }
             ],
@@ -86,7 +87,10 @@ export class NavComponent implements OnInit {
                 { link: '/clothing/kaws', label: 'KAWS' },
                 { link: '/clothing/pharaoh-collection', label: 'Pharaoh Collections' },
                 { link: '/clothing/limited-hype', label: 'Limited Hype' },
-                { link: '/clothing/sp5der', label: 'Sp5der' }
+                { link: '/clothing/sp5der', label: 'Sp5der' },
+                { link: '/clothing/yeezy-gap', label: 'Yeezy GAP' },
+                { link: '/clothing/anti-social', label: 'Anti Social Social Club' },
+                { link: '/clothing/stussy', label: 'Stussy' }
             ],
             active: false
         },
@@ -99,7 +103,9 @@ export class NavComponent implements OnInit {
                 { link: '/other/new-balance', label: 'New Balance' },
                 { link: '/other/crocs', label: 'Crocs' },
                 { link: '/other/asics', label: 'Asics' },
+                { link: '/other/telfar', label: 'Telfar' },
                 { link: '/other/sneaker-care', label: 'Sneaker Care' },
+                { link: '/other/stanley', label: 'Stanley' },
             ],
             active: false
         }
@@ -160,14 +166,30 @@ export class NavComponent implements OnInit {
     }
 
     onSearchEnter(event: KeyboardEvent) {
+    console.log('Key pressed:', event.key, event.code, event.keyCode);
       if (event.key === 'Enter') {
+        event.preventDefault();
           const query = (event.target as HTMLInputElement).value;
           if (query) {
               this.router.navigate(['/search-results'], { queryParams: { query } });
               this.closeSearchBar();
           }
       }
-  }
+     }
+
+     clearInput(inputElement: HTMLInputElement): void {
+        inputElement.value = '';
+        this.onSearch({ target: inputElement } as unknown as Event); // Optional: Trigger any live search update
+      }
+
+  onSearchButtonClick(event: MouseEvent) {
+    const query = this.searchInput.nativeElement.value.trim(); // Trim to remove any leading/trailing spaces
+    if (query) {
+        console.log("here");
+        this.router.navigate(['/search-results'], { queryParams: { query } });
+        this.closeSearchBar();
+    }
+}
   
   
 
@@ -177,7 +199,7 @@ export class NavComponent implements OnInit {
         if (searchBarContainer) {
             searchBarContainer.style.display = 'none';
         }
-        this.router.navigate(['/item', product.id], { state: { product } });
+        this.router.navigate(['/item', product.originalId], { state: { product } });
     }
 
     closeSearchBar() {

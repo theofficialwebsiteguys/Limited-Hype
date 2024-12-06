@@ -20,6 +20,8 @@ export class JordanComponent {
   minPrice: number = 0;
   maxPrice: number = Infinity;
   filteredProductsCount: number = 0;
+  sizeFilter: string = '';
+  availableSizes: string[] = [];
 
   constructor(
     private productService: ProductService,
@@ -29,9 +31,18 @@ export class JordanComponent {
 
 
   ngOnInit(){
+    // Subscribe to query parameters to initialize filters and sorting
+    this.route.queryParams.subscribe(params => {
+      this.sortOption = params['sort'] || '';
+      this.sizeFilter = params['size'] || '';
+      this.minPrice = params['minPrice'] ? +params['minPrice'] : 0;
+      this.maxPrice = params['maxPrice'] ? +params['maxPrice'] : Infinity;
 
-    //this.jordanProducts$ = this.productService.getJordanProducts();
+      this.updateProducts();
+    });
+  }
 
+  updateProducts() {
     this.jordanProducts$ = this.productService.getJordanProducts().pipe(
       map(products => {
         const tag = this.route.snapshot.routeConfig?.path?.split('/')[1];
@@ -49,6 +60,8 @@ export class JordanComponent {
           return products.filter(product => product.tag === 'Jordan 4');
         }else if (tag === 'jordan-5') {
           return products.filter(product => product.tag === 'Jordan 5');
+        }else if (tag === 'jordan-6') {
+          return products.filter(product => product.tag === 'Jordan 6');
         }else if (tag === 'jordan-12') {
           return products.filter(product => product.tag === 'Jordan 12');
         }else {
@@ -56,12 +69,24 @@ export class JordanComponent {
         }
       })
     );
-    this.updateFilteredProducts();
+
+    // Populate available sizes
+    this.jordanProducts$.subscribe(products => {
+      this.availableSizes = Array.from(new Set(products.flatMap(product => product.variant.map(v => v.size))))
+        .sort((a, b) => {
+          const numA = parseFloat(a);
+          const numB = parseFloat(b);
+          return numA - numB; // Sort numerically
+        });
+
+      this.updateFilteredProducts();
+    });
   }
 
   onSortChange(event: any): void {
     this.sortOption = event.target.value;
     this.updateFilteredProducts();
+    this.updateQueryParams();
   }
 
   updateFilteredProducts(): void {
@@ -75,7 +100,11 @@ export class JordanComponent {
 
   filterProducts(products: Product[]): Product[] {
     return products.filter(product => 
-      product.variant[0].price >= this.minPrice.toString() && product.variant[0].price <= this.maxPrice.toString()
+      product.variant.some((v:any) => 
+        v.price >= this.minPrice && 
+        v.price <= this.maxPrice && 
+        (this.sizeFilter ? v.size === this.sizeFilter : true)
+      )
     );
   }
 
@@ -95,7 +124,15 @@ export class JordanComponent {
   }
 
   viewProductDetail(product: any): void {
-    this.router.navigate(['/item', product.id], { state: { product } });
+    this.router.navigate(['/item', product.originalId], {
+      state: { product },
+      queryParams: {
+        sort: this.sortOption,
+        size: this.sizeFilter,
+        minPrice: this.minPrice,
+        maxPrice: this.maxPrice
+      }
+    });
   }
 
   getMinPrice(product: Product) {
@@ -103,5 +140,37 @@ export class JordanComponent {
       return Math.min(...product.variant.map(v => parseFloat(v.price)));
     }
     return null;
+  }
+
+  onSizeFilterChange(event: any): void {
+    this.sizeFilter = event.target.value;
+    this.updateFilteredProducts();
+    this.updateQueryParams();
+  }
+
+  updateQueryParams() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        sort: this.sortOption,
+        size: this.sizeFilter,
+        minPrice: this.minPrice,
+        maxPrice: this.maxPrice
+      },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  clearFilters(): void {
+    this.sortOption = '';
+    this.sizeFilter = '';
+    this.minPrice = 0;
+    this.maxPrice = Infinity;
+  
+    // Reset the filtered products
+    this.updateFilteredProducts();
+  
+    // Clear query parameters
+    this.updateQueryParams();
   }
 }

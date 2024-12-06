@@ -36,7 +36,10 @@ export class HeroComponent implements OnInit {
   }
 
   checkRoute(url: string): void {
-    if (url === '/' || url === '/home') {
+    const urlToCheck = window.location.href; // Use current URL
+    const parsedUrl = new URL(urlToCheck);
+    const pathname = parsedUrl.pathname;
+    if (pathname === '/' || pathname === '/home') {
       this.isHomePage = true;
       this.page_title = 'Limited Hype';
       this.heroHeight = '70vh';
@@ -45,7 +48,7 @@ export class HeroComponent implements OnInit {
       const queryParams = this.route.snapshot.queryParams;
       const query = queryParams['query'];
 
-      switch (url.split('?')[0]) {
+      switch (pathname) {
         case '/nike':
           this.backgroundImage = 'assets/nike-hero.jpg';
           this.page_title = 'All Nike';
@@ -84,6 +87,11 @@ export class HeroComponent implements OnInit {
         case '/jordan/jordan-5':
           this.backgroundImage = 'assets/jordan-hero.jpg';
           this.page_title = 'Jordan 5';
+          this.heroHeight = '30vh';
+          break;
+        case '/jordan/jordan-6':
+          this.backgroundImage = 'assets/jordan-hero.jpg';
+          this.page_title = 'Jordan 6';
           this.heroHeight = '30vh';
           break;
         case '/jordan/jordan-11':
@@ -181,6 +189,26 @@ export class HeroComponent implements OnInit {
           this.page_title = 'Sp5der';
           this.heroHeight = '30vh';
           break;
+        case '/clothing/yeezy-gap':
+          this.backgroundImage = 'assets/clothing-hero.jpg';
+          this.page_title = 'Yeezy GAP';
+          this.heroHeight = '30vh';
+          break;
+        case '/clothing/anti-social':
+          this.backgroundImage = 'assets/clothing-hero.jpg';
+          this.page_title = 'Anti Social Social Club';
+          this.heroHeight = '30vh';
+          break;
+        case '/clothing/stussy':
+          this.backgroundImage = 'assets/clothing-hero.jpg';
+          this.page_title = 'Stussy';
+          this.heroHeight = '30vh';
+          break;
+        case '/other/telfar':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Telfar';
+          this.heroHeight = '30vh';
+          break;
         case '/story':
           this.backgroundImage = 'assets/hero.webp';
           this.page_title = 'Our Story';
@@ -269,6 +297,11 @@ export class HeroComponent implements OnInit {
         case '/other/sneaker-care':
           this.backgroundImage = 'assets/hero.webp';
           this.page_title = 'Sneaker Care';
+          this.heroHeight = '30vh';
+          break;
+        case '/other/stanley':
+          this.backgroundImage = 'assets/hero.webp';
+          this.page_title = 'Stanley';
           this.heroHeight = '30vh';
           break;
         // Add more cases as needed

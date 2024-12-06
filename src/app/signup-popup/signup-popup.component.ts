@@ -24,11 +24,11 @@ export class SignupPopupComponent implements OnInit {
 
   onSubmit() {
     this.signupService.signup(this.email).subscribe(response => {
-      alert('Signup successful! Your discount code is: ' + response.promotionCode);
+      alert('Signup successful! Look out for exclusive deals.');
       this.closePopup();
     }, error => {
       console.error('Error during signup:', error);
-      alert('Signup failed. Please try again.');
+      alert('Signup failed.');
     });
   }
 

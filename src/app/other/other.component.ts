@@ -20,6 +20,9 @@ export class OtherComponent implements OnInit {
   minPrice: number = 0;
   maxPrice: number = Infinity;
   filteredProductsCount: number = 0;
+  sizeFilter: string = '';
+  availableSizes: string[] = [];
+
 
   constructor(
     private productService: ProductService,
@@ -28,6 +31,20 @@ export class OtherComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+     // Subscribe to query parameters to initialize filters and sorting
+     this.route.queryParams.subscribe(params => {
+      this.sortOption = params['sort'] || '';
+      this.sizeFilter = params['size'] || '';
+      this.minPrice = params['minPrice'] ? +params['minPrice'] : 0;
+      this.maxPrice = params['maxPrice'] ? +params['maxPrice'] : Infinity;
+
+      this.updateProducts();
+    });
+
+    
+  }
+
+  updateProducts() {
     this.otherProducts$ = this.productService.getOtherProducts().pipe(
       map(products => {
         const brand = this.route.snapshot.routeConfig?.path?.split('/')[1];
@@ -39,20 +56,35 @@ export class OtherComponent implements OnInit {
           return products.filter(product => product.brand === 'Crocs');
         } else if (brand === 'asics') {
           return products.filter(product => product.brand === 'Asics');
+        } else if (brand === 'telfar') {
+          return products.filter(product => product.brand === 'Telfar');
         } else if (brand === 'sneaker-care') {
           return products.filter(product => product.brand === 'Sneaker Care');
+        } else if (brand === 'stanley') {
+          return products.filter(product => product.brand === 'Stanley');
         } else {
           return products;
         }
       })
     );
 
-    this.updateFilteredProducts();
+    // Populate available sizes
+    this.otherProducts$.subscribe(products => {
+      this.availableSizes = Array.from(new Set(products.flatMap(product => product.variant.map(v => v.size))))
+        .sort((a, b) => {
+          const numA = parseFloat(a);
+          const numB = parseFloat(b);
+          return numA - numB; // Sort numerically
+        });
+
+      this.updateFilteredProducts();
+    });
   }
 
   onSortChange(event: any): void {
     this.sortOption = event.target.value;
     this.updateFilteredProducts();
+    this.updateQueryParams();
   }
 
   updateFilteredProducts(): void {
@@ -66,7 +98,11 @@ export class OtherComponent implements OnInit {
 
   filterProducts(products: Product[]): Product[] {
     return products.filter(product => 
-      parseFloat(product.variant[0].price) >= this.minPrice && parseFloat(product.variant[0].price) <= this.maxPrice
+      product.variant.some((v:any) => 
+        v.price >= this.minPrice && 
+        v.price <= this.maxPrice && 
+        (this.sizeFilter ? v.size === this.sizeFilter : true)
+      )
     );
   }
 
@@ -85,8 +121,16 @@ export class OtherComponent implements OnInit {
     }
   }
 
-  viewProductDetail(product: Product): void {
-    this.router.navigate(['/item', product.id], { state: { product } });
+  viewProductDetail(product: any): void {
+    this.router.navigate(['/item', product.originalId], {
+      state: { product },
+      queryParams: {
+        sort: this.sortOption,
+        size: this.sizeFilter,
+        minPrice: this.minPrice,
+        maxPrice: this.maxPrice
+      }
+    });
   }
 
   getMinPrice(product: Product) {
@@ -94,5 +138,37 @@ export class OtherComponent implements OnInit {
       return Math.min(...product.variant.map(v => parseFloat(v.price)));
     }
     return null;
+  }
+
+  onSizeFilterChange(event: any): void {
+    this.sizeFilter = event.target.value;
+    this.updateFilteredProducts();
+    this.updateQueryParams();
+  }
+
+  updateQueryParams() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        sort: this.sortOption,
+        size: this.sizeFilter,
+        minPrice: this.minPrice,
+        maxPrice: this.maxPrice
+      },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  clearFilters(): void {
+    this.sortOption = '';
+    this.sizeFilter = '';
+    this.minPrice = 0;
+    this.maxPrice = Infinity;
+  
+    // Reset the filtered products
+    this.updateFilteredProducts();
+  
+    // Clear query parameters
+    this.updateQueryParams();
   }
 }

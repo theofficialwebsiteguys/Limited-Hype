@@ -11,6 +11,16 @@
   .contact-container h2 {
     margin-bottom: 20px;
   }
+
+  .confirmation-message {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 20px;
+    text-align: center;
+  }
+  
   
   .form-group {
     display: flex;
@@ -66,5 +76,22 @@
       flex: 1 1 100%;
     }
   
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 5px;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
   

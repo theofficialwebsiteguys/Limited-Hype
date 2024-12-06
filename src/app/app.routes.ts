@@ -15,8 +15,8 @@ import { SearchResultsComponent } from './search-results/search-results.componen
 import { OtherComponent } from './other/other.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: '/home', pathMatch: 'full' },  // Redirects to /home
-    { path: 'home', component: HomeComponent},
+    { path: '', component: HomeComponent },  // Set HomeComponent to the root path
+    { path: 'home', redirectTo: '', pathMatch: 'full' },  // Redirect /home to the root path
     { path: 'nike', component: NikeComponent },
     { path: 'nike/sb', component: NikeComponent },
     { path: 'nike/dunk', component: NikeComponent },
@@ -30,6 +30,7 @@ export const routes: Routes = [
     { path: 'jordan/jordan-3', component: JordanComponent},
     { path: 'jordan/jordan-4', component: JordanComponent},
     { path: 'jordan/jordan-5', component: JordanComponent},
+    { path: 'jordan/jordan-6', component: JordanComponent},
     { path: 'jordan/jordan-11', component: JordanComponent},
     { path: 'jordan/jordan-12', component: JordanComponent},
     { path: 'yeezy', component: YeezyComponent},
@@ -50,12 +51,17 @@ export const routes: Routes = [
     { path: 'clothing/limited-hype', component: ClothingComponent},
     { path: 'clothing/kaws', component: ClothingComponent},
     { path: 'clothing/sp5der', component: ClothingComponent},
+    { path: 'clothing/yeezy-gap', component: ClothingComponent},
+    { path: 'clothing/anti-social', component: ClothingComponent},
+    { path: 'clothing/stussy', component: ClothingComponent},
     { path: 'other', component: OtherComponent},
     { path: 'other/used', component: OtherComponent},
     { path: 'other/new-balance', component: OtherComponent},
     { path: 'other/crocs', component: OtherComponent},
     { path: 'other/asics', component: OtherComponent},
+    { path: 'other/telfar', component: OtherComponent},
     { path: 'other/sneaker-care', component: OtherComponent},
+    { path: 'other/stanley', component: OtherComponent},
     { path: 'shop', component: ShopComponent},
     { path: 'story', component: StoryComponent},
     { path: 'item/:id', component: ItemDisplayComponent },

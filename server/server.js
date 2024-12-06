@@ -1,5 +1,17 @@
-const stripe = require('stripe')('sk_test_51POOsRAtSJLPfYWYzKygHZrTqLVLZT1qeygJwmtRtEOcGFSuXW2elncPen7s33Bj05TVdAORvClGb22qoJI8IRqm00oMB0K7LZ');
-var shippo = require('shippo')('shippo_test_f32790b86652b02e3e470dbd3e852e790c76ee79');
+
+require('dotenv').config();
+//TEST
+//const stripe = require('stripe')('sk_test_51POOsRAtSJLPfYWYzKygHZrTqLVLZT1qeygJwmtRtEOcGFSuXW2elncPen7s33Bj05TVdAORvClGb22qoJI8IRqm00oMB0K7LZ');
+
+//PROD
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+//TEST
+//var shippo = require('shippo')('shippo_test_f32790b86652b02e3e470dbd3e852e790c76ee79');
+
+//PROD
+var shippo = require('shippo')(process.env.SHIPPO_KEY);
+
 const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
@@ -8,9 +20,13 @@ const NodeCache = require('node-cache');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
+const lightspeedToken = process.env.LIGHTSPEED_API_TOKEN;
+
 const app = express();
 
 app.use(bodyParser.json());
+
+const orderStore = {}; // In-memory store
 
 
 // app.use(cors({
@@ -20,12 +36,36 @@ app.use(bodyParser.json());
 //   allowedHeaders: 'Content-Type,Authorization'
 // }));
 
+// app.use(cors({
+//   origin: 'https://theofficialwebsiteguys.github.io', // Replace with your actual frontend URL
+//   credentials: true,
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   allowedHeaders: 'Content-Type,Authorization'
+// }));
+
+const allowedOrigins = ['https://ltdhype.com', 'https://www.ltdhype.com'];
+
 app.use(cors({
-  origin: 'https://theofficialwebsiteguys.github.io', // Replace with your actual frontend URL
+  origin: function (origin, callback) {
+    // Allow requests with no origin, like mobile apps or curl requests
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'Content-Type,Authorization'
 }));
+
+// app.use(cors({
+//   origin: 'https://ltdhype.com', // Replace with your actual frontend URL
+//   credentials: true,
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   allowedHeaders: 'Content-Type,Authorization'
+// }));
 
 const EXCHANGE_RATES = {
   EUR: 0.85,
@@ -36,8 +76,8 @@ const EXCHANGE_RATES = {
 const transporter = nodemailer.createTransport({
   service: 'gmail', // or your email provider
   auth: {
-    user: 'theofficialwebsiteguys@gmail.com',
-    pass: 'tshz rgqz yyhn tiwg'
+    user: 'ltdhypekittery@gmail.com',
+    pass: process.env.EMAIL_PASSWORD
   }
 });
 
@@ -68,24 +108,24 @@ app.post('/api/signup', async (req, res) => {
     });
 
     // Create a 5% discount coupon
-    const coupon = await stripe.coupons.create({
-      percent_off: 5,
-      duration: 'once', // The coupon can be used only once
-    });
+    // const coupon = await stripe.coupons.create({
+    //   percent_off: 5,
+    //   duration: 'once', // The coupon can be used only once
+    // });
 
     // Create a promotion code for the coupon
-    const promotionCode = await stripe.promotionCodes.create({
-      coupon: coupon.id,
-      max_redemptions: 1, // Ensure the coupon can be used only once
-    });
+    // const promotionCode = await stripe.promotionCodes.create({
+    //   coupon: coupon.id,
+    //   max_redemptions: 1, // Ensure the coupon can be used only once
+    // });
 
     res.status(200).send({
-      message: 'Customer created and discount assigned',
+      message: 'Customer created',
       customerId: customer.id,
-      promotionCode: promotionCode.code,
+      //promotionCode: promotionCode.code,
     });
   } catch (error) {
-    console.error('Error creating customer and coupon:', error);
+    console.error('Error creating customer');
     res.status(500).send({ error: error.message });
   }
 });
@@ -97,16 +137,19 @@ app.post('/send-email', (req, res) => {
   
   const mailOptions = {
     from: email,
-    to: 'jaredhfinn@gmail.com',
+    to: 'ltdhypekittery@gmail.com',
     subject: `Contact form submission from ${name}`,
     text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nComment: ${comment}`
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      return res.status(500).send(error.toString());
+      console.error('Error sending email:', error); // Log the error for debugging
+      return res.status(500).json({ error: error.toString() }); // Explicitly return to avoid further execution
     }
-    res.status(200).send('Email sent: ' + info.response);
+
+    // Respond only on success
+    res.status(200).json({ message: 'Email sent successfully', response: info.response });
   });
 });
 
@@ -118,7 +161,7 @@ app.post('/send-confirm-email', (req, res) => {
     return `Name: ${product.name}, Quantity: ${product.quantity}, Price: $${product.price}`;
   }).join('\n');
 
-  const productDetailsHtml = products.map(product => {
+  const productDetailsHtml = orderStore[orderNo].map(product => {
     return `<p><strong>Name:</strong> ${product.name}<br><strong>Quantity:</strong> ${product.quantity}<br><strong>Price:</strong> $${product.price}</p>`;
   }).join('');
 
@@ -127,7 +170,8 @@ app.post('/send-confirm-email', (req, res) => {
     to: `${email}`,
     subject: `Confirmation Order - ${orderNo}`,
     text: `Order No: ${orderNo}\nProducts:\n${productDetailsText}\n`,
-    html: `<p><strong>Order #:</strong> ${orderNo}</p>
+    html: `<h1><strong>ALL SALES FINAL. No refunds or exchanges.</h1>
+          <p><strong>Order #:</strong> ${orderNo}</p>
            <p><strong>Products:</strong></p>
            ${productDetailsHtml}`
   };
@@ -136,14 +180,13 @@ app.post('/send-confirm-email', (req, res) => {
     if (error) {
       return res.status(500).send(error.toString());
     }
+    delete orderStore[orderNo];
     res.status(200).send('Email sent: ' + info.response);
   });
 });
 
 app.post('/create-checkout-session', async (req, res) => {
   const { lineItems, currency, address } = req.body;
-
-  console.log(address)
 
       // Define the sender's address
     const addressFrom = {
@@ -184,9 +227,10 @@ app.post('/create-checkout-session', async (req, res) => {
     
   try {
     const line_items = [];
-    const taxRateId = 'txr_1PRiu0AtSJLPfYWYtoTbQLGC';
+    //const taxRateId = 'txr_1PRiu0AtSJLPfYWYtoTbQLGC';
+    const taxRateId = 'txr_1PUUb7AtSJLPfYWY2kGnnoov';
 
-    console.log(lineItems)
+    console.log(JSON.stringify(lineItems))
 
     for (const item of lineItems) {
 
@@ -317,6 +361,8 @@ app.post('/create-checkout-session', async (req, res) => {
 
   const orderId = generateUniqueOrderId();
 
+  orderStore[orderId] = lineItems;
+
   const session = await stripe.checkout.sessions.create({
     ui_mode: 'embedded',
     payment_method_types: ['card'],
@@ -336,20 +382,27 @@ app.post('/create-checkout-session', async (req, res) => {
       shipping: {
         name: addressTo.name,
         address: {
-            line1: addressTo.street1,
-            line2: addressTo.street2,
-            city: addressTo.city,
-            state: addressTo.state,
-            postal_code: addressTo.zip,
-            country: addressTo.country,
+          line1: addressTo.street1,
+          line2: addressTo.street2,
+          city: addressTo.city,
+          state: addressTo.state,
+          postal_code: addressTo.zip,
+          country: addressTo.country,
         }
       },
+      metadata: {
+        order_id: orderId,
+        line_items: JSON.stringify(lineItems)
+      }
     },
+    allow_promotion_codes: true,
     metadata: {
-      order_id: orderId
+      order_id: orderId,
+      variants: JSON.stringify(lineItems)
     },
     //return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
-    return_url: `https://theofficialwebsiteguys.github.io/success?session_id={CHECKOUT_SESSION_ID}`
+    //return_url: `https://theofficialwebsiteguys.github.io/success?session_id={CHECKOUT_SESSION_ID}`
+    return_url: `https://ltdhype.com/success?session_id={CHECKOUT_SESSION_ID}`
   });
 
     //console.log(session)
@@ -370,266 +423,6 @@ function generateUniqueOrderId() {
   return orderId;
 }
 
-
-// app.post('/create-checkout-session', async (req, res) => {
-//   const items = req.body.products;
-//   const currency = req.body.currency;
-//   const promotionCode = req.body.promotionCode; // Get the promotion code from the request body
-//   const shippingAddress = req.body.shippingAddress; // Get the shipping address from the request body
-
-//   // Define the sender's address
-//   const addressFrom = {
-//     name: "Limited Hype",
-//     street1: "345 US-1",
-//     city: "Kittery",
-//     state: "ME",
-//     zip: "03904",
-//     country: "US"
-//   };
-
-//   // Define the recipient's address based on the shipping address
-//   // const addressTo = {
-//   //   name: shippingAddress.name,
-//   //   street1: shippingAddress.street,
-//   //   city: shippingAddress.city,
-//   //   state: shippingAddress.state,
-//   //   zip: shippingAddress.zip,
-//   //   country: shippingAddress.country
-//   // };
-
-//   const addressTo = {
-//     name: "Jared Finn",
-//     street1: "600 Broadway",
-//     city: "Everett",
-//     state: "MA",
-//     zip: "02149",
-//     country: "US"
-//   };
-
-//   // Aggregate parcel details based on items
-//   const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
-//   const maxLength = Math.max(...items.map(item => item.length));
-//   const maxWidth = Math.max(...items.map(item => item.width));
-//   const maxHeight = Math.max(...items.map(item => item.height));
-
-//   const parcel = {
-//     length: "24",
-//     width: "12",
-//     height: "8",
-//     distance_unit: "in",
-//     weight: 10,
-//     mass_unit: "lb"
-//   };
-
-
-//   try {
-//     const line_items = [];
-
-//     for (const item of items) {
-//       let convertedPrice = item.price;
-
-//       if (currency.toLowerCase() !== 'usd') {
-//         const exchangeRate = EXCHANGE_RATES[currency.toUpperCase()];
-//         if (!exchangeRate) {
-//           throw new Error(`Exchange rate for ${currency} not found`);
-//         }
-//         convertedPrice = item.price * exchangeRate;
-//       }
-
-//       const product = await stripe.products.create({
-//         name: item.name,
-//       });
-
-//       const price = await stripe.prices.create({
-//         unit_amount: convertedPrice,
-//         currency: currency,
-//         product: product.id,
-//       });
-
-//       line_items.push({
-//         price: price.id,
-//         quantity: item.quantity,
-//       });
-//     }
-
-//     // Fetch shipping rates from Shippo
-//     const shippingRates = await getShippingRates(addressFrom, addressTo, [parcel]);
-
-//      // Filter for UPS Ground and two fastest options
-//      const upsGroundRate = shippingRates.find(rate => rate.provider === 'UPS' && rate.servicelevel.name.includes('Ground'));
-//      const fastestRates = shippingRates
-//        .filter(rate => rate.provider === 'UPS' && rate.servicelevel.name !== 'Ground')
-//        .sort((a, b) => a.estimated_days - b.estimated_days)
-//        .slice(0, 2);
-
-//        console.log(upsGroundRate);
-//        console.log(fastestRates);
-
-//     // const shipping_options = [upsGroundRate, ...fastestRates].filter(Boolean).map(rate => ({
-//     //   shipping_rate_data: {
-//     //     type: 'fixed_amount',
-//     //     fixed_amount: { amount: Math.round(rate.amount * 100), currency: currency },
-//     //     display_name: rate.servicelevel.name,
-//     //     delivery_estimate: {
-//     //       minimum: { unit: 'day', value: rate.estimated_days },
-//     //       maximum: { unit: 'day', value: rate.estimated_days },
-//     //     },
-//     //   },
-//     // }));
-
-//     const shipping_options = [
-//             {
-//               shipping_rate_data: {
-//                 type: 'fixed_amount',
-//                 fixed_amount: { amount: upsGroundRate.amount * 100, currency: currency }, // Shipping cost
-//                 display_name: upsGroundRate.servicelevel.display_name,
-//                 // Delivery estimate
-//                 delivery_estimate: {
-//                   minimum: { unit: 'business_day', value: 1 },
-//                   maximum: { unit: 'business_day', value: 5 },
-//                 },
-//               },
-//             },
-//             {
-//               shipping_rate_data: {
-//                 type: 'fixed_amount',
-//                 fixed_amount: { amount: fastestRates[0].amount * 100, currency: currency }, // Shipping cost
-//                 display_name: fastestRates[0].servicelevel.display_name,
-//                 // Delivery estimate
-//                 delivery_estimate: {
-//                   minimum: { unit: 'business_day', value: 1 },
-//                   maximum: { unit: 'business_day', value: 2 },
-//                 },
-//               },
-//             },
-//             {
-//               shipping_rate_data: {
-//                 type: 'fixed_amount',
-//                 fixed_amount: { amount: fastestRates[1].amount * 100, currency: currency }, // Shipping cost
-//                 display_name: fastestRates[1].servicelevel.display_name,
-//                 // Delivery estimate
-//                 delivery_estimate: {
-//                   minimum: { unit: 'business_day', value: 1 },
-//                   maximum: { unit: 'business_day', value: 2 },
-//                 },
-//               },
-//             },
-//           ];
-
-//     const session = await stripe.checkout.sessions.create({
-//       ui_mode: 'embedded',
-//       line_items: line_items,
-//       mode: 'payment',
-//       allow_promotion_codes: true,
-//       shipping_address_collection: {
-//         allowed_countries: ['US'],
-//       },
-//       shipping_options: shipping_options,
-//       return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
-//     });
-
-//     res.send({ clientSecret: session.client_secret });
-//   } catch (error) {
-//     console.error('Error creating checkout session:', error);
-//     res.status(500).send({ error: error.message });
-//   }
-// });
-
-
-// app.post('/create-checkout-session', async (req, res) => {
-//   const items = req.body.products;
-//   const currency = req.body.currency;
-
-//   if (!['usd', 'eur', 'gbp'].includes(currency.toLowerCase())) {
-//     throw new Error('Unsupported currency');
-//   }
-
-//   try {
-//     // Create an array to hold line item objects for Stripe
-//     const line_items = [];
-
-//     for (const item of items) {
-
-//       let convertedPrice = item.price;
-
-//       if (currency.toLowerCase() !== 'usd') {
-//         const exchangeRate = EXCHANGE_RATES[currency.toUpperCase()];
-//         if (!exchangeRate) {
-//           throw new Error(`Exchange rate for ${currency} not found`);
-//         }
-//         convertedPrice = item.price * exchangeRate;
-//         //priceInCents = Math.round(convertedPrice * 100); // Convert back to cents
-//       }
-
-
-//       // Create a product
-//       const product = await stripe.products.create({
-//         name: item.name,
-//       });
-
-//       // Create a price for the product
-//       const price = await stripe.prices.create({
-//         unit_amount: convertedPrice, // Price in cents
-//         currency: currency,
-//         product: product.id,
-//       });
-
-//       // Add the line item for the session
-//       line_items.push({
-//         price: price.id,
-//         quantity: item.quantity,
-//       });
-//     }
-
-//      // Define shipping options
-//      const shipping_options = [
-//       {
-//         shipping_rate_data: {
-//           type: 'fixed_amount',
-//           fixed_amount: { amount: 1500, currency: currency }, // Shipping cost
-//           display_name: 'Standard Shipping',
-//           // Delivery estimate
-//           delivery_estimate: {
-//             minimum: { unit: 'business_day', value: 5 },
-//             maximum: { unit: 'business_day', value: 7 },
-//           },
-//         },
-//       },
-//       {
-//         shipping_rate_data: {
-//           type: 'fixed_amount',
-//           fixed_amount: { amount: 2500, currency: currency }, // Shipping cost
-//           display_name: 'Express Shipping',
-//           // Delivery estimate
-//           delivery_estimate: {
-//             minimum: { unit: 'business_day', value: 1 },
-//             maximum: { unit: 'business_day', value: 2 },
-//           },
-//         },
-//       },
-//     ];
-
-    
-//     // Create the checkout session
-//     const session = await stripe.checkout.sessions.create({
-//       ui_mode: 'embedded',
-//       line_items: line_items,
-//       mode: 'payment',
-//       shipping_address_collection: {
-//         allowed_countries: ['US'],
-//       },
-//       shipping_options: shipping_options,
-//       //return_url: `https://theofficialwebsiteguys.github.io/Limited-Hype/success?session_id={CHECKOUT_SESSION_ID}`,
-//       return_url: `http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}`,
-//     });
-
-
-//     res.send({ clientSecret: session.client_secret });
-//   } catch (error) {
-//     console.error('Error creating checkout session:', error); // Log the error for debugging
-//     res.status(500).send({ error: error.message });
-//   }
-// });
 
 
 app.post('/get-shipping-rates', async (req, res) => {
@@ -714,10 +507,16 @@ app.post('/api/checkout-session', async (req, res) => {
   const sessionId = req.query.session_id;
   const additionalData = req.body; // Handle any additional data sent in the body
 
+  console.log("AdditionalData Line Items: ", JSON.stringify(additionalData));
+
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    console.log("Checkout Session: ", JSON.stringify(session));
+
+    console.log("Order Store (Line Items): ", JSON.stringify(orderStore[session.metadata.order_id]));
     
-    await registerSale(additionalData);
+    await registerSale(orderStore[session.metadata.order_id]);
 
     clearCache();
     
@@ -742,11 +541,13 @@ async function registerSale(items) {
     }))
   };
 
+  console.log("Payload to Register: ", JSON.stringify(payload));
+
   try {
     const response = await axios.post('https://limitedhypellp.retail.lightspeed.app/api/register_sales', payload, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer lsxs_pt_Onfr839n5jTDglw8JHanZbbx5Otk7qmL'
+        'Authorization': `Bearer ${process.env.LIGHTSPEED_API_TOKEN}`
       }
     });
     console.log('Sale registered successfully:', response.data);
@@ -764,7 +565,7 @@ app.get('/api/products', async (req, res) => {
     while (hasMorePages) {
       const response = await axios.get('https://limitedhypellp.retail.lightspeed.app/api/2.0/products', {
         headers: {
-          'Authorization': 'Bearer lsxs_pt_Onfr839n5jTDglw8JHanZbbx5Otk7qmL'
+          'Authorization': `Bearer ${process.env.LIGHTSPEED_API_TOKEN}`
         },
         params: {
           after: after
@@ -783,21 +584,25 @@ app.get('/api/products', async (req, res) => {
       }
     }
 
+
+    //Assign Images of all parent products
+
+
     // Fetch inventory for all products
-    const inventoryRequests = allProducts.map(product =>
-      getInventory(product.id)
-    );
-    const inventories = await Promise.all(inventoryRequests);
+    // const inventoryRequests = allProducts.map(product =>
+    //   getInventory(product.id)
+    // );
+    // const inventories = await Promise.all(inventoryRequests);
 
 
-    // Filter products based on inventory
-    const productsWithInventory = allProducts.filter((product, index) => {
-      return inventories[index].data.some(item => item.current_amount > 0);
-    }
+    // // Filter products based on inventory
+    // const productsWithInventory = allProducts.filter((product, index) => {
+    //   return inventories[index].data.some(item => item.current_amount > 0);
+    // }
 
-    );
+    // );
 
-    res.json(productsWithInventory);
+    res.json(allProducts);
   } catch (error) {
     console.error('Error fetching products:', error.message);
     if (error.response) {
@@ -812,6 +617,54 @@ app.get('/api/products', async (req, res) => {
     res.status(500).json({ message: 'Error fetching products', error: error.message });
   }
 });
+
+
+
+
+app.get('/api/products/inventory', async (req, res) => {
+  let allInventory = [];
+  let after = 0; // Initialize the cursor
+  let hasMorePages = true;
+
+  try {
+    while (hasMorePages) {
+      const response = await axios.get(`https://limitedhypellp.retail.lightspeed.app/api/2.0/inventory`, {
+        headers: {
+          'Authorization': `Bearer ${process.env.LIGHTSPEED_API_TOKEN}`
+        },
+        params: {
+          after: after
+        }
+      });
+
+      const inventory = response.data.data;
+      const versionInfo = response.data.version;
+
+      if (inventory && inventory.length > 0) {
+        allInventory = allInventory.concat(inventory);
+        after = versionInfo.max; // Use the max version number for the next request
+        console.log(`Fetched ${allInventory.length} inventory items so far, next after=${after}`);
+      } else {
+        hasMorePages = false;
+      }
+    }
+
+    res.json(allInventory);
+  } catch (error) {
+    console.error('Error fetching inventory:', error.message);
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.status);
+      console.error('Response headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('Request data:', error.request);
+    } else {
+      console.error('Error message:', error.message);
+    }
+    res.status(500).json({ message: 'Error fetching inventory', error: error.message });
+  }
+});
+
 
 app.get('/api/products/:id/inventory', async (req, res) => {
   const productId = req.params.id;
@@ -845,7 +698,7 @@ async function getInventory(productId) {
   // Fetch inventory from API
   const response = await axios.get(`https://limitedhypellp.retail.lightspeed.app/api/2.0/products/${productId}/inventory`, {
     headers: {
-      'Authorization': 'Bearer lsxs_pt_Onfr839n5jTDglw8JHanZbbx5Otk7qmL' // Replace with dynamic token storage
+      'Authorization': `Bearer ${process.env.LIGHTSPEED_API_TOKEN}`
     }
   });
 

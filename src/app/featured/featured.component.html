@@ -16,17 +16,42 @@
     </div>
   </div>
   <ng-template #loadingFeatured>
-      <div class="text-center m-5 p-5">
-        <img src="assets/spinning-shoe.gif" alt="Loading..." class="loading-gif">
-      </div>
+    <div class="text-center m-5 p-5">
+      <img src="assets/spinning-shoe.gif" alt="Loading..." class="loading-gif">
+    </div>
   </ng-template>
 </div>
 
-<div class="container mt-5">
+<div class="container mt-5" #allProducts>
   <h2 class="">All products</h2>
-  <div class="shoe-section" *ngIf="allProducts.length; else loadingAll">
+  <div class="sorting-controls mb-4 d-flex align-items-center flex-wrap">
+    <div class="d-flex align-items-center" style="margin-right: 10px;">
+      <label class="sort-title" for="sort">Sort by: </label>
+      <select id="sort" class="form-control sort-select" (change)="onSortChange($event)">
+        <option value="" disabled [selected]="!sortOption">Select Option</option>
+        <option value="priceAsc" [selected]="sortOption === 'priceAsc'">Price: Low to High</option>
+        <option value="priceDesc" [selected]="sortOption === 'priceDesc'">Price: High to Low</option>
+        <option value="nameAsc" [selected]="sortOption === 'nameAsc'">Name: A to Z</option>
+        <option value="nameDesc" [selected]="sortOption === 'nameDesc'">Name: Z to A</option>
+      </select>
+    </div>
+    
+    <div class="d-flex align-items-center" style="margin-right: 10px;">
+      <label class="sort-title" for="sizeFilter">Filter by Size: </label>
+      <select id="sizeFilter" class="form-control size-select" (change)="onSizeFilterChange($event)">
+        <option value="" disabled [selected]="!sizeFilter">Select Size</option>
+        <option *ngFor="let size of availableSizes" [value]="size" [selected]="size === sizeFilter">{{size}}</option>
+      </select>
+    </div>
+
+    <button class="btn btn-secondary m-1" (click)="clearFilters()">Clear Filters</button>
+    
+    <span class="ml-3">{{filteredProductsCount}} products</span>
+  </div>
+
+  <div class="shoe-section" *ngIf="displayedFilteredProducts.length; else loadingAll">
     <div class="row justify-content-center">
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of displayedProducts">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of displayedFilteredProducts">
         <div class="card h-100" (click)="viewProductDetail(product)">
           <div class="card-img-container">
             <img [src]="product.images[0]" class="card-img-top" alt="{{product.name}}">
@@ -39,12 +64,12 @@
       </div>
     </div>
     <div class="text-center my-4">
-      <button class="btn btn-primary" (click)="displayMoreProducts()" *ngIf="currentIndex < allProducts.length">View More</button>
+      <button class="btn btn-primary" (click)="displayMoreFilteredProducts()" *ngIf="currentIndex < filteredProducts.length">View More</button>
     </div>
   </div>
   <ng-template #loadingAll>
-      <div class="text-center m-5 p-5">
-        <img src="assets/spinning-shoe.gif" alt="Loading..." class="loading-gif">
-      </div>
+    <div class="text-center m-5 p-5">
+      <img src="assets/spinning-shoe.gif" alt="Loading..." class="loading-gif">
+    </div>
   </ng-template>
 </div>

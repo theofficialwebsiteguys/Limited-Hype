@@ -36,7 +36,8 @@
         <span *ngFor="let size of sizes" 
               class="size" 
               [class.selected]="size === selectedSize" 
-              (click)="selectSize(size)">
+              [class.disabled]="disabledSizes.includes(size)"
+              (click)="!disabledSizes.includes(size) && selectSize(size)">
           {{ size }}
         </span>
       </div>

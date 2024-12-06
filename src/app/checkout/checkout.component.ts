@@ -4,6 +4,8 @@ import { loadStripe, StripeElements, StripeEmbeddedCheckout } from '@stripe/stri
 import { PaymentService } from '../payment.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment';
+
 
 declare var google: any;
 
@@ -48,7 +50,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
 
     try {
-      this.stripe = await loadStripe('pk_test_51POOsRAtSJLPfYWYi6NnxCtQ1hBBJwgdLm6Mh8ARbkWDsSvI0naQxwMYRRPKxoPKRel3Jx22ovNHywU2AagBD1sB00Ueys9YAE');
+      this.stripe = await loadStripe(environment.stripePublicKey);
+      // this.stripe = await loadStripe('pk_test_51POOsRAtSJLPfYWYi6NnxCtQ1hBBJwgdLm6Mh8ARbkWDsSvI0naQxwMYRRPKxoPKRel3Jx22ovNHywU2AagBD1sB00Ueys9YAE');
       if (!this.stripe) {
         console.error('Stripe failed to load.');
         return;
@@ -123,7 +126,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       const quantity = cartItem.quantity;
       const category = cartItem.category;
       const product_id = variant.originalVariantProductId || cartItem.originalId;
-      return { name: itemName, price: (price * 100), quantity: quantity, category: category, product_id: product_id };
+      return { name: itemName, price: price, quantity: quantity, size: variant.size , category: category, product_id: product_id };
     });
 
     const checkoutData = {
